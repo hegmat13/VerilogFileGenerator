@@ -1,21 +1,58 @@
-#include <iostream>
-#include <fstream>
+//
+//  main.m
+//  dpgen
+//
+//  Created by Ian Hooks on 10/28/19.
+//  Copyright © 2019 Ian Hooks. All rights reserved.
+//
+
+#include <stdio.h>
+#include "input.hpp"
+#include "Inputs.hpp"
+#include "Outputs.hpp"
+#include "Wires.hpp"
+#include "Equations.hpp"
+
 using namespace std;
 
-int main() {
-    std::cout << "Hello, World!" << std::endl;
+int main(int argc, char* argv[]) {
+    
+    argv[1] = "474a_circuit1.txt";//hard code files for debudding
+    argv[2] = "verilogFile";//comment out to run from the terminal
+    verilogSim sim;
+    sim.run(argv[1], argv[2]);
+    sim.ReadCommandsFromFile();
+    //return 0;
+    //}
+    
+    //JUST IGNORE ALL THIS THESE WERE TRIAL AND ERROR TESTS
+    
+//    int counter;
+//    printf("Program Name Is: %s",argv[0]);
+//    if(argc==1)
+//        printf("\nNo Extra Command Line Argument Passed Other Than Program Name");
+//    if(argc>=2)
+//    {
+//        printf("\nNumber Of Arguments Passed: %d",argc);
+//        printf("\n----Following Are The Command Line Arguments Passed----");
+//        for(counter=0;counter<argc;counter++)
+//            printf("\nargv[%d]: %s",counter,argv[counter]);
+//    }
+    
+    //stringstream inputFile;
+    //inputFile << argv[1]; //fix for commmand line entry
+    //inputFile << "474a_circuit1.txt";
+    //stringstream outputFile;
+    //outputFile << argv[2]; //fix for commmand line entry
+    //outputFile << "verilogFile";
+    //ifstream inputFileStream;
+    //ifstream outputFileStream;
+    //inputFileStream.open(inputFile.str());
+    //outputFileStream.open(outputFile.str());
+
+//    string test1, test2;
+//    string test3, test4;
+//    inputFileStream >> test1 >> test2 >> test3 >> test4;
+    
     return 0;
-}
-
-string readFile(string textName) {
-    //input variables and stream
-    ifstream inFile(textName);
-    string oneLine("");
-    string theText{""};
-
-    while (!inFile.eof()) {
-
-    }
-
-    return theText;
 }
