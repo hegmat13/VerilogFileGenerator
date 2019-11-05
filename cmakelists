@@ -3,4 +3,4 @@ project(dpgen)
 
 set(CMAKE_CXX_STANDARD 14)
 
-add_executable(dpgen main.cpp)
+add_executable(dpgen main.cpp Equations.cpp input.cpp Inputs.cpp Outputs.cpp Wires.cpp)
