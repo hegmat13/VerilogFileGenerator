@@ -17,19 +17,19 @@ using namespace std;
 class Equations{
 private:
     string _out;
-    char _operation;
+    string _operation;
     string _first;
     string _second;
     string _muxSel;
 
 public:
-    Equations(string out, char operation, string first, string second, string muxSel);
+    Equations(string out, string operation, string first, string second, string muxSel);
     Equations();
     
     string GetOut() const;
     void SetOut(string out);
-    char GetOperation() const;
-    void SetOperation(char operation);
+    string GetOperation() const;
+    void SetOperation(string operation);
     string GetFirst() const;
     void SetFirst(string first);
     string GetSecond() const;
@@ -39,3 +39,4 @@ public:
 };
 
 #endif /* Equations_hpp */
+
