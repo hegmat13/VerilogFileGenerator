@@ -24,12 +24,10 @@ void verilogSim::ReadCommandsFromFile() {
     
     stringstream inputFile;
     inputFile << _inputFileName;
-    stringstream outputFile;
-    outputFile << _outputFileName;
+    
     ifstream inputFileStream;
-    ifstream outputFileStream;
     inputFileStream.open(inputFile.str());
-    outputFileStream.open(outputFile.str());
+    
     
     string line;
     
@@ -69,7 +67,7 @@ void verilogSim::ReadCommandsFromFile() {
         //INPUTS
         if((iow == "input") && ((iow != check1) || (type != check2))){
             Inputs temp;
-            temp.SetVariableI(variable.at(0));
+            temp.SetVariableI(variable);
             
             if(firstLetter == 'I') {
                 
@@ -130,10 +128,10 @@ void verilogSim::ReadCommandsFromFile() {
             check2 = type;
             
         while(extra != "") {
-            temp.SetVariableI(extra.at(0));
+            temp.SetVariableI(extra);
             _inputs.push_back(temp);
             lineStream >> extra;
-            if(extra.at(0) == temp.GetVariableI()){
+            if(extra == temp.GetVariableI()){
                 break;
             }
           }
@@ -292,11 +290,11 @@ void verilogSim::ReadCommandsFromFile() {
         //EQUATIONS
         
         //lineStream >> iow >> type >> variable >> extra;
-        if (type == "=") {
+        if (type == "="){
             Equations temp;
             temp.SetOut(iow);
             temp.SetFirst(variable);
-            temp.SetOperation(extra.at(0));
+            temp.SetOperation(extra);
             if(extra == "?"){
                 lineStream >> mux2 >> colon >> sel;
                 temp.SetSecond(mux2);
@@ -308,6 +306,97 @@ void verilogSim::ReadCommandsFromFile() {
                 temp.SetMuxSel("0");
             }
             _equations.push_back(temp);
-        }//end equations
+        }
+        
+        //end equations
     }
+}
+
+
+void verilogSim::TestValid() {
+    
+    unsigned long int lenI, lenO, lenW, lenE;
+    unsigned int i = 0, j = 0;
+    
+    Equations temp;
+    lenE = _equations.size();
+    while(i<lenE){
+        temp = _equations.at(i);
+    
+    if((temp.GetOperation() != "+") || (temp.GetOperation() != "-") ||(temp.GetOperation() != "*") ||(temp.GetOperation() != ">") || (temp.GetOperation() != "<") || (temp.GetOperation() != "?") || (temp.GetOperation() != ">>") || (temp.GetOperation() != "<<") || (temp.GetOperation() != "==")){
+        //here the equations is invalid if the operator so we just need to say invalid or something idk
+        //what teh requirements are
+         }
+        i++;
+    }
+    
+    i = 0;
+    int check = 0;
+    
+    lenI = _inputs.size();
+    lenO = _outputs.size();
+    lenW = _wires.size();
+    lenE = _equations.size();
+    
+    Inputs tempI;
+    Outputs tempO;
+    Wires tempW;
+   //we have to loop through each equations first and second variable and
+    // check it with every output,input, and wire wariable
+    //if we find it in one of those three we are good if not its invalid
+    
+    while(i < lenE) {
+        temp = _equations.at(i);
+        while(j<lenI){
+            if((temp.GetFirst() == tempI.GetVariableI()) || (temp.GetSecond() == tempI.GetVariableI())){
+                check = 1;
+            }
+            j++;
+        }
+        j=0;
+        while(j<lenO){
+            if((temp.GetFirst() == tempO.GetVariableO()) || (temp.GetSecond() == tempO.GetVariableO())){
+                check = 1;
+            }
+            j++;
+        }
+        j=0;
+        while(j<lenO){
+            if((temp.GetFirst() == tempO.GetVariableO()) || (temp.GetSecond() == tempO.GetVariableO())){
+                check = 1;
+            }
+            j++;
+        }
+        j=0;
+        if(check == 0){
+            //here one of the equations is using an input/output/wire that isnt declared
+            // so we need to output that error accordingly
+            
+        }
+        i++;
+    }
+    
+    
+}
+
+void verilogSim::WriteCommandsToFile() {
+    
+    
+    ifstream outputFileStream;
+    stringstream outputFile;
+    outputFile << _outputFileName;
+    outputFileStream.open(outputFile.str());
+    
+    //okey the file to write to is open here
+    //now we just have to write to the file based off the 4 vectors
+    //if type = "I" or "U" print out int or uint for that line
+    //subtract one from the datawidth to put into the brackets in the brackets of verilog
+    //and add the variable to the end
+    
+    //so on and so forth for the outputs wires and equaitons
+    
+    //and somewhere we have to check the bitwidth of things inorder to concatanate the smaller ones
+    
+
+
 }
