@@ -1,4 +1,5 @@
 //
+//
 //  input.hpp
 //  dpgen
 //
@@ -33,6 +34,8 @@ private:
 public:
     void run(char* _inputFileName, char* _outputFileName);
     void ReadCommandsFromFile();
+    void TestValid();
+    void WriteCommandsToFile();
 
 };
 
