@@ -323,8 +323,7 @@ void verilogSim::TestValid() {
     while(i<lenE){
         temp = _equations.at(i);
     
-    if((temp.GetOperation() != "+") || (temp.GetOperation() != "-") ||(temp.GetOperation() != "*") ||(temp.GetOperation() != ">") || (temp.GetOperation() != "<") || (temp.GetOperation() != "?") || (temp.GetOperation() != ">>") || (temp.GetOperation() != "<<") || (temp.GetOperation() != "==")){
-        //here the equations is invalid if the operator so we just need to say invalid or something idk
+      if((temp.GetOperation() != "+") || (temp.GetOperation() != "-") ||(temp.GetOperation() != "*") ||(temp.GetOperation() != ">") || (temp.GetOperation() != "") || (temp.GetOperation() != "<") || (temp.GetOperation() != "?") || (temp.GetOperation() != ">>") || (temp.GetOperation() != "<<") || (temp.GetOperation() != "==")){ //here the equations is invalid if the operator so we just need to say invalid or something idk
         //what teh requirements are
          }
         i++;
