@@ -1,4 +1,3 @@
-//
 //  Equations.cpp
 //  dpgen
 //
@@ -8,7 +7,7 @@
 
 #include "Equations.hpp"
 
-Equations::Equations(string out, char operation, string first, string second, string muxSel) {
+Equations::Equations(string out, string operation, string first, string second, string muxSel) {
     
     _out = out;
     _operation = operation;
@@ -20,13 +19,13 @@ Equations::Equations(string out, char operation, string first, string second, st
 Equations::Equations(){
     
     SetOut("0");
-    SetOperation('0');
+    SetOperation("0");
     SetFirst("0");
     SetSecond("0");
     SetMuxSel("0");
     
     _out = "0";
-    _operation = '0';
+    _operation = "0";
     _first = "0";
     _second = "0";
     _muxSel = "0";
@@ -41,12 +40,12 @@ void Equations::SetOut(string out) {
     _out = out;
 }
 
-char Equations::GetOperation() const {
-    char operation = _operation;
+string Equations::GetOperation() const {
+    string operation = _operation;
     return operation;
 }
 
-void Equations::SetOperation(char operation) {
+void Equations::SetOperation(string operation) {
     _operation = operation;
 }
 
