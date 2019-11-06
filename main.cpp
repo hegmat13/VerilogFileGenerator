@@ -22,6 +22,8 @@ int main(int argc, char* argv[]) {
     verilogSim sim;
     sim.run(argv[1], argv[2]);
     sim.ReadCommandsFromFile();
+    sim.TestValid();
+    sim.WriteCommandsToFile();
     //return 0;
     //}
     
