@@ -16,18 +16,23 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
+	// console out the names of the files coming in from the terminal 
+	// cout << "Argument 1 is : " << argv[1] << endl;
+	// cout << "Argument 2 is : " << argv[2] << endl;
+	//
 
-    argv[1] = const_cast<char*>("test1.txt");//hard code files for debudding
-    argv[2] = const_cast<char*>("verilogFile.v");//comment out to run from the terminal
-    verilogSim sim;
-    sim.run(argv[1], argv[2]);
-    sim.ReadCommandsFromFile();
-    sim.TestValid();
-    sim.WriteCommandsToFile();
-    //return 0;
-    //}
+	argv[1] = const_cast<char*>("test1.txt");//hard code files for debudding
+	argv[2] = const_cast<char*>("verilogFile.v");//comment out to run from the terminal
 
-    //JUST IGNORE ALL THIS THESE WERE TRIAL AND ERROR TESTS
+	verilogSim sim;
+	sim.run(argv[1], argv[2]);
+	sim.ReadCommandsFromFile();
+	sim.TestValid();
+	sim.WriteCommandsToFile();
+	//return 0;
+	//}
+
+	//JUST IGNORE ALL THIS THESE WERE TRIAL AND ERROR TESTS
 
 //    int counter;
 //    printf("Program Name Is: %s",argv[0]);
@@ -41,20 +46,20 @@ int main(int argc, char* argv[]) {
 //            printf("\nargv[%d]: %s",counter,argv[counter]);
 //    }
 
-    //stringstream inputFile;
-    //inputFile << argv[1]; //fix for commmand line entry
-    //inputFile << "474a_circuit1.txt";
-    //stringstream outputFile;
-    //outputFile << argv[2]; //fix for commmand line entry
-    //outputFile << "verilogFile";
-    //ifstream inputFileStream;
-    //ifstream outputFileStream;
-    //inputFileStream.open(inputFile.str());
-    //outputFileStream.open(outputFile.str());
+	//stringstream inputFile;
+	//inputFile << argv[1]; //fix for commmand line entry
+	//inputFile << "474a_circuit1.txt";
+	//stringstream outputFile;
+	//outputFile << argv[2]; //fix for commmand line entry
+	//outputFile << "verilogFile";
+	//ifstream inputFileStream;
+	//ifstream outputFileStream;
+	//inputFileStream.open(inputFile.str());
+	//outputFileStream.open(outputFile.str());
 
 //    string test1, test2;
 //    string test3, test4;
 //    inputFileStream >> test1 >> test2 >> test3 >> test4;
 
-    return 0;
+	return 0;
 }
