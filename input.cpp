@@ -382,7 +382,7 @@ void verilogSim::TestValid() {
 
 void verilogSim::WriteCommandsToFile() {
 
-    ifstream outputFileStream;
+    ofstream outputFileStream;
     stringstream outputFile;
     outputFile << _outputFileName;
     outputFileStream.open(outputFile.str());
