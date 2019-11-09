@@ -12,6 +12,7 @@
 #include "Wires.hpp"
 #include "Equations.hpp"
 #include <string>
+#include <algorithm>
 
 using namespace std;
 
@@ -131,7 +132,7 @@ void verilogSim::ReadCommandsFromFile() {
                 temp.SetVariableI(*extra.c_str());
                 _inputs.push_back(temp);
                 lineStream >> extra;
-                if(*extra.c_str() == temp.GetVariableI()){
+                if(extra == temp.GetVariableI()){
                     break;
                 }
             }
@@ -348,7 +349,7 @@ void verilogSim::TestValid() {
     while(i < lenE) {
         temp = _equations.at(i);
         while(j<lenI){
-            if((*temp.GetFirst().c_str() == tempI.GetVariableI()) || (*temp.GetSecond().c_str() == tempI.GetVariableI())){
+            if((temp.GetFirst() == tempI.GetVariableI()) || (temp.GetSecond() == tempI.GetVariableI())){
                 check = 1;
             }
             j++;
@@ -405,7 +406,7 @@ void verilogSim::WriteCommandsToFile() {
     for (auto b = 0; b < _outputs.size() - 1; b++) {
         outputFile << _outputs.at(b).GetVariableO() << ", ";
     }
-    outputFile << _outputs.back().GetVariableO() << ");"; //NEEDS NEWLINE
+    outputFile << _outputs.back().GetVariableO() << ");" << endl; //NEEDS NEWLINE
 
     //now we begin adding the inputs, they're all individual for now
     //if you figure out how to group them all by sizes props
@@ -461,22 +462,35 @@ void verilogSim::WriteCommandsToFile() {
         //these variables are for getting the bitwidth that is placed in parentheses like #(64)
         auto first = _equations.at(f).GetFirst();
         auto second = _equations.at(f).GetSecond();
+        auto out = _equations.at(f).GetOut();
         auto fWidth = 0;
         auto sWidth = 0;
         auto bitWidth = 0;
 
+//        cout << _inputs.at(0).GetVariableI() << endl;
+//        cout << _inputs.at(1).GetVariableI() << endl;
+//        cout << _inputs.at(0).GetDataWidthI() << endl;
+//        cout << _inputs.at(1).GetDataWidthI() << endl;
+
         //compare the first and second operands to find their bitwidths
         //starting with an inputs comparison
         for (auto g = 0; g < _inputs.size(); g++) {
-            if (first == std::to_string(_inputs.at(g).GetVariableI())) {
+            if (first == _inputs.at(g).GetVariableI()) {
                 fWidth = _inputs.at(g).GetDataWidthI();
+                cout << "first got: " << _inputs.at(g).GetDataWidthI() << endl;
             }
-            if (second == std::to_string(_inputs.at(g).GetVariableI())) {
+            if (second == _inputs.at(g).GetVariableI()) {
                 sWidth = _inputs.at(g).GetDataWidthI();
+                cout << "second got: " << _inputs.at(g).GetDataWidthI() << endl;
             }
         }
         //next an outputs comparison
         for (auto h = 0; h < _outputs.size(); h++) {
+//            if (out == _outputs.at(h).GetVariableO()) {
+//                cout << _outputs.at(0).GetVariableO() << endl;
+//                cout << "it entered the output check loop!" << endl;
+//            }
+
             if (first == _outputs.at(h).GetVariableO()) {
                 fWidth = _outputs.at(h).GetDataWidthO();
             }
@@ -496,6 +510,13 @@ void verilogSim::WriteCommandsToFile() {
 
         //now we do a comparison to find the bigger bitwidth
         bitWidth = std::max(fWidth, sWidth);
+
+        //now a big ol chain for checking what the operation is and writing it
+        if (_equations.at(f).GetOperation() == "+") {
+            outputFile << "ADD #(" << bitWidth << ") " << "Add" << f << "(" << first << ", "<<second << ", " << out << ");" << endl;
+            cout << "ADD #(" << bitWidth << ") " << "Add" << f << "(" << first << ", "<<second << ", " << out << ");" << endl;
+//            cout << fWidth << " " << sWidth;
+        }
 
         //NOTE: REMEMBER TO DOUBLE BITWIDTH WHEN DOING A MULTIPLY OP
         //IE:
