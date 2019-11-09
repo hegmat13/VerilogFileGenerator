@@ -406,7 +406,7 @@ void verilogSim::WriteCommandsToFile() {
     for (auto b = 0; b < _outputs.size() - 1; b++) {
         outputFile << _outputs.at(b).GetVariableO() << ", ";
     }
-    outputFile << _outputs.back().GetVariableO() << ");" << endl; //NEEDS NEWLINE
+    outputFile << _outputs.back().GetVariableO() << ");" << endl;
 
     //now we begin adding the inputs, they're all individual for now
     //if you figure out how to group them all by sizes props
@@ -419,7 +419,7 @@ void verilogSim::WriteCommandsToFile() {
         }
 
         //add in the bitwidth part of the text
-        outputFile << "[ " << std::to_string(_inputs.at(c).GetDataWidthI() - 1) << ":0] " << _inputs.at(c).GetVariableI() << ";"; //NEEDS NEWLINE
+        outputFile << "[ " << std::to_string(_inputs.at(c).GetDataWidthI() - 1) << ":0] " << _inputs.at(c).GetVariableI() << ";" << endl;
     }
 
     //outputs are also all on their own
@@ -432,7 +432,7 @@ void verilogSim::WriteCommandsToFile() {
         }
 
         //add in the bitwidth part
-        outputFile << "[ " << std::to_string(_outputs.at(d).GetDataWidthO() - 1) << ":0] " << _outputs.at(d).GetVariableO() << ";"; //NEEDS NEWLINE
+        outputFile << "[ " << std::to_string(_outputs.at(d).GetDataWidthO() - 1) << ":0] " << _outputs.at(d).GetVariableO() << ";" << endl;
     }
 
     //wires are also all on their own
@@ -445,14 +445,8 @@ void verilogSim::WriteCommandsToFile() {
         }
 
         //add in the bitwidth part
-        outputFile << "[ " << std::to_string(_wires.at(e).GetDataWidthW() - 1) << ":0] " << _wires.at(e).GetVariableW() << ";"; //NEEDS NEWLINE
+        outputFile << "[ " << std::to_string(_wires.at(e).GetDataWidthW() - 1) << ":0] " << _wires.at(e).GetVariableW() << ";" << endl;
     }
-
-    //
-    //
-    //should we put a clock in here? we had one for the last assignment circuits
-    //
-    //
 
     //start printing the equations
     for (auto f = 0; f < _equations.size(); f++) {
@@ -513,9 +507,12 @@ void verilogSim::WriteCommandsToFile() {
 
         //now a big ol chain for checking what the operation is and writing it
         if (_equations.at(f).GetOperation() == "+") {
-            outputFile << "ADD #(" << bitWidth << ") " << "Add" << f << "(" << first << ", "<<second << ", " << out << ");" << endl;
-            cout << "ADD #(" << bitWidth << ") " << "Add" << f << "(" << first << ", "<<second << ", " << out << ");" << endl;
-//            cout << fWidth << " " << sWidth;
+            outputFile << "ADD #(" << bitWidth << ") " << "Add" << f << "(" << first << ", "<< second << ", " << out << ");" << endl;
+            //cout << "ADD #(" << bitWidth << ") " << "Add" << f << "(" << first << ", "<< second << ", " << out << ");" << endl;
+        } else if (_equations.at(f).GetOperation() == "-") {
+            outputFile << "SUB #(" << bitWidth << ") " << "Sub" << f << "(" << first << ", "<< second << ", " << out << ");" << endl;
+        } else if (_equations.at(f).GetOperation() == "*") {
+            outputFile << "MUL #(" << (bitWidth * 2) << ") " << "Mult" << f << "(" << first << ", "<< second << ", " << out << ");" << endl;
         }
 
         //NOTE: REMEMBER TO DOUBLE BITWIDTH WHEN DOING A MULTIPLY OP
