@@ -17,8 +17,8 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 
-    argv[1] = const_cast<char*>("474a_circuit1.txt");//hard code files for debudding
-    argv[2] = const_cast<char*>("verilogFile");//comment out to run from the terminal
+    argv[1] = const_cast<char*>("test1.txt");//hard code files for debudding
+    argv[2] = const_cast<char*>("verilogFile.v");//comment out to run from the terminal
     verilogSim sim;
     sim.run(argv[1], argv[2]);
     sim.ReadCommandsFromFile();
