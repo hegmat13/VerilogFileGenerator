@@ -16,9 +16,9 @@
 using namespace std;
 
 int main(int argc, char* argv[]) {
-    
-    argv[1] = "474a_circuit1.txt";//hard code files for debudding
-    argv[2] = "verilogFile";//comment out to run from the terminal
+
+    argv[1] = const_cast<char*>("474a_circuit1.txt");//hard code files for debudding
+    argv[2] = const_cast<char*>("verilogFile");//comment out to run from the terminal
     verilogSim sim;
     sim.run(argv[1], argv[2]);
     sim.ReadCommandsFromFile();
@@ -26,9 +26,9 @@ int main(int argc, char* argv[]) {
     sim.WriteCommandsToFile();
     //return 0;
     //}
-    
+
     //JUST IGNORE ALL THIS THESE WERE TRIAL AND ERROR TESTS
-    
+
 //    int counter;
 //    printf("Program Name Is: %s",argv[0]);
 //    if(argc==1)
@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
 //        for(counter=0;counter<argc;counter++)
 //            printf("\nargv[%d]: %s",counter,argv[counter]);
 //    }
-    
+
     //stringstream inputFile;
     //inputFile << argv[1]; //fix for commmand line entry
     //inputFile << "474a_circuit1.txt";
@@ -55,6 +55,6 @@ int main(int argc, char* argv[]) {
 //    string test1, test2;
 //    string test3, test4;
 //    inputFileStream >> test1 >> test2 >> test3 >> test4;
-    
+
     return 0;
 }
