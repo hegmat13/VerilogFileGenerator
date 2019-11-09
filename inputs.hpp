@@ -11,6 +11,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <string>
 
 using namespace std;
 
@@ -18,16 +19,16 @@ class Inputs{
 private:
     char _dataTypeI;
     unsigned int _dataWidthI;
-    char _variableI;
+    string _variableI;
 public:
-    Inputs(char dataTypeI, unsigned int dataWidthI, char variableI);
+    Inputs(char dataTypeI, unsigned int dataWidthI, string variableI);
     Inputs();
     
     char GetDataTypeI() const;
     void SetDataTypeI(char dataTypeI);
     unsigned int GetDataWidthI() const;
     void SetDataWidthI(unsigned int dataWidthI);
-    char GetVariableI() const;
+    string GetVariableI() const;
     void SetVariableI(char variableI);
 };
 
