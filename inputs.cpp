@@ -9,7 +9,7 @@
 #include "Inputs.hpp"
 
 
-Inputs::Inputs(char dataTypeI, unsigned int dataWidthI, char variableI) {
+Inputs::Inputs(char dataTypeI, unsigned int dataWidthI, string variableI) {
     
     _dataTypeI = dataTypeI;
     _dataWidthI = dataWidthI;
@@ -46,20 +46,11 @@ void Inputs::SetDataWidthI(unsigned int dataWidthI) {
     _dataWidthI = dataWidthI;
 }
 
-char Inputs::GetVariableI() const {
-    char variableI = _variableI;
+string Inputs::GetVariableI() const {
+    string variableI = _variableI;
     return variableI;
 }
 
 void Inputs::SetVariableI(char variableI) {
     _variableI = variableI;
 }
-
-
-
-
-
-
-
-
-
