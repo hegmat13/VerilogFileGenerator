@@ -1,0 +1,6 @@
+input Int8 a, b, c, d
+
+output Int8 z
+
+z = c + d
+z = a + b
