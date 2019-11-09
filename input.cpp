@@ -447,14 +447,60 @@ void verilogSim::WriteCommandsToFile() {
         outputFile << "[ " << std::to_string(_wires.at(e).GetDataWidthW() - 1) << ":0] " << _wires.at(e).GetVariableW() << ";"; //NEEDS NEWLINE
     }
 
-    //need wire creation here
-
+    //
+    //
     //should we put a clock in here? we had one for the last assignment circuits
+    //
+    //
 
     //start printing the equations
     for (auto f = 0; f < _equations.size(); f++) {
         //format is generally (changes for certain ops):
         //      ADD #(32) Add9(l00, l01, l10);
+
+        //these variables are for getting the bitwidth that is placed in parentheses like #(64)
+        auto first = _equations.at(f).GetFirst();
+        auto second = _equations.at(f).GetSecond();
+        auto fWidth = 0;
+        auto sWidth = 0;
+        auto bitWidth = 0;
+
+        //compare the first and second operands to find their bitwidths
+        //starting with an inputs comparison
+        for (auto g = 0; g < _inputs.size(); g++) {
+            if (first == std::to_string(_inputs.at(g).GetVariableI())) {
+                fWidth = _inputs.at(g).GetDataWidthI();
+            }
+            if (second == std::to_string(_inputs.at(g).GetVariableI())) {
+                sWidth = _inputs.at(g).GetDataWidthI();
+            }
+        }
+        //next an outputs comparison
+        for (auto h = 0; h < _outputs.size(); h++) {
+            if (first == _outputs.at(h).GetVariableO()) {
+                fWidth = _outputs.at(h).GetDataWidthO();
+            }
+            if (second == _outputs.at(h).GetVariableO()) {
+                sWidth = _outputs.at(h).GetDataWidthO();
+            }
+        }
+        //finally a wires comparison
+        for (auto i = 0; i < _wires.size(); i++) {
+            if (first == _wires.at(i).GetVariableW()) {
+                fWidth = _wires.at(i).GetDataWidthW();
+            }
+            if (second == _wires.at(i).GetVariableW()) {
+                sWidth = _wires.at(i).GetDataWidthW();
+            }
+        }
+
+        //now we do a comparison to find the bigger bitwidth
+        bitWidth = std::max(fWidth, sWidth);
+
+        //NOTE: REMEMBER TO DOUBLE BITWIDTH WHEN DOING A MULTIPLY OP
+        //IE:
+        //      if (op == "*"){
+        //          ostream << " #("<< bitwidth * 2 << ") "
     }
 
     //last line of the .v file
