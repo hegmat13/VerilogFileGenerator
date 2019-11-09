@@ -457,6 +457,7 @@ void verilogSim::WriteCommandsToFile() {
         auto first = _equations.at(f).GetFirst();
         auto second = _equations.at(f).GetSecond();
         auto out = _equations.at(f).GetOut();
+        auto muxSel = _equations.at(f).GetMuxSel();
         auto fWidth = 0;
         auto sWidth = 0;
         auto bitWidth = 0;
@@ -507,18 +508,29 @@ void verilogSim::WriteCommandsToFile() {
 
         //now a big ol chain for checking what the operation is and writing it
         if (_equations.at(f).GetOperation() == "+") {
-            outputFile << "ADD #(" << bitWidth << ") " << "Add" << f << "(" << first << ", "<< second << ", " << out << ");" << endl;
+            outputFile << "ADD #(" << bitWidth << ") Add" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
             //cout << "ADD #(" << bitWidth << ") " << "Add" << f << "(" << first << ", "<< second << ", " << out << ");" << endl;
         } else if (_equations.at(f).GetOperation() == "-") {
-            outputFile << "SUB #(" << bitWidth << ") " << "Sub" << f << "(" << first << ", "<< second << ", " << out << ");" << endl;
+            outputFile << "SUB #(" << bitWidth << ") Sub" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
         } else if (_equations.at(f).GetOperation() == "*") {
-            outputFile << "MUL #(" << (bitWidth * 2) << ") " << "Mult" << f << "(" << first << ", "<< second << ", " << out << ");" << endl;
+            outputFile << "MUL #(" << (bitWidth * 2) << ") Mult" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
+        } else if (_equations.at(f).GetOperation() == ">") {
+            //FIX ME
+            outputFile << "COMP #(" << bitWidth << ") Comp" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
+        } else if (_equations.at(f).GetOperation() == "<") {
+            //FIX ME
+            outputFile << "COMP #(" << bitWidth << ") Comp" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
+        } else if (_equations.at(f).GetOperation() == "==") {
+            //FIX ME
+            outputFile << "COMP #(" << bitWidth << ") Comp" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
+        } else if (_equations.at(f).GetOperation() == "?") {
+            //FIX ME
+            outputFile << "MUX2x1 #(" << bitWidth << ") Mux" << f << "(" << first << ", " << second << ", " << muxSel << ", " << out << ");" << endl;
+        } else if (_equations.at(f).GetOperation() == ">>") {
+            outputFile << "SHR #(" << bitWidth << ") Shr" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
+        } else if (_equations.at(f).GetOperation() == "<<") {
+            outputFile << "SHL #(" << bitWidth << ") Shl" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
         }
-
-        //NOTE: REMEMBER TO DOUBLE BITWIDTH WHEN DOING A MULTIPLY OP
-        //IE:
-        //      if (op == "*"){
-        //          ostream << " #("<< bitwidth * 2 << ") "
     }
 
     //last line of the .v file
