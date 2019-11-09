@@ -382,12 +382,10 @@ void verilogSim::TestValid() {
 
 void verilogSim::WriteCommandsToFile() {
 
-    ofstream outputFileStream;
-    stringstream outputFile;
-    outputFile << _outputFileName;
-    outputFileStream.open(outputFile.str());
+    ofstream outputFile;
+    outputFile.open(_outputFileName);
 
-    //okey the file to write to is open here
+    //okay the file to write to is open here
     //now we just have to write to the file based off the 4 vectors
     //if type = "I" or "U" print out int or uint for that line//subtract one from the datawidth to put into the brackets in the brackets of verilog
     //and add the variable to the end
@@ -419,7 +417,7 @@ void verilogSim::WriteCommandsToFile() {
         }
 
         //add in the bitwidth part of the text
-        outputFile << "[ " << std::to_string(_inputs.at(c).GetDataWidthI() - 1) << ":0] " << _inputs.at(c).GetVariableI() << ";" << endl;
+        outputFile << "[" << std::to_string(_inputs.at(c).GetDataWidthI() - 1) << ":0] " << _inputs.at(c).GetVariableI() << ";" << endl;
     }
 
     //outputs are also all on their own
@@ -432,7 +430,7 @@ void verilogSim::WriteCommandsToFile() {
         }
 
         //add in the bitwidth part
-        outputFile << "[ " << std::to_string(_outputs.at(d).GetDataWidthO() - 1) << ":0] " << _outputs.at(d).GetVariableO() << ";" << endl;
+        outputFile << "[" << std::to_string(_outputs.at(d).GetDataWidthO() - 1) << ":0] " << _outputs.at(d).GetVariableO() << ";" << endl;
     }
 
     //wires are also all on their own
@@ -445,7 +443,7 @@ void verilogSim::WriteCommandsToFile() {
         }
 
         //add in the bitwidth part
-        outputFile << "[ " << std::to_string(_wires.at(e).GetDataWidthW() - 1) << ":0] " << _wires.at(e).GetVariableW() << ";" << endl;
+        outputFile << "[" << std::to_string(_wires.at(e).GetDataWidthW() - 1) << ":0] " << _wires.at(e).GetVariableW() << ";" << endl;
     }
 
     //start printing the equations
@@ -472,11 +470,11 @@ void verilogSim::WriteCommandsToFile() {
         for (auto g = 0; g < _inputs.size(); g++) {
             if (first == _inputs.at(g).GetVariableI()) {
                 fWidth = _inputs.at(g).GetDataWidthI();
-                cout << "first got: " << _inputs.at(g).GetDataWidthI() << endl;
+                //cout << "first got: " << _inputs.at(g).GetDataWidthI() << endl;
             }
             if (second == _inputs.at(g).GetVariableI()) {
                 sWidth = _inputs.at(g).GetDataWidthI();
-                cout << "second got: " << _inputs.at(g).GetDataWidthI() << endl;
+                //cout << "second got: " << _inputs.at(g).GetDataWidthI() << endl;
             }
         }
         //next an outputs comparison
@@ -527,8 +525,10 @@ void verilogSim::WriteCommandsToFile() {
             //FIX ME
             outputFile << "MUX2x1 #(" << bitWidth << ") Mux" << f << "(" << first << ", " << second << ", " << muxSel << ", " << out << ");" << endl;
         } else if (_equations.at(f).GetOperation() == ">>") {
+            //FIX ME
             outputFile << "SHR #(" << bitWidth << ") Shr" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
         } else if (_equations.at(f).GetOperation() == "<<") {
+            //FIX ME
             outputFile << "SHL #(" << bitWidth << ") Shl" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
         }
     }
@@ -536,8 +536,6 @@ void verilogSim::WriteCommandsToFile() {
     //last line of the .v file
     outputFile << "endmodule";
 
-    //write the stream to file here
-
     //close the fstream after writing the file
-    outputFileStream.close();
+    outputFile.close();
 }
