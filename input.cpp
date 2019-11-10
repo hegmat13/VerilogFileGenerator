@@ -54,12 +54,12 @@ void verilogSim::ReadCommandsFromFile() {
         unsigned long int x = extra.length();
         if(extra != ""){
             if(extra.at(extra.length()-1) == ','){
-                extra.at(extra.length()-1) =  '\0';
+                extra.at(extra.length()-1) =  ' ';
             }
         }
         if(variable != ""){
             if(variable.at(variable.length()-1) == ','){
-                variable.at(variable.length()-1) =  '\0';
+                variable.at(variable.length()-1) =  ' ';
             }
         }
         firstLetter = type.at(0);
@@ -221,6 +221,8 @@ void verilogSim::ReadCommandsFromFile() {
             temp.SetVariableW(variable);
 
             if(firstLetter == 'I') {
+                //COMMENT
+                //cout << "entered data width loop for signed" << endl;
 
                 temp.SetDataTypeW('I');
                 firstNum = type.at(3);
@@ -250,6 +252,9 @@ void verilogSim::ReadCommandsFromFile() {
             }//end of signed int
 
             else if(firstLetter == 'U'){
+                //COMMENT
+                //cout << "entered data width loop for UNsigned" << endl;
+
                 temp.SetDataTypeW('U');
                 firstNum = type.at(4);
                 if((firstNum == '1')&& (len == 5)){
@@ -275,12 +280,16 @@ void verilogSim::ReadCommandsFromFile() {
                 }
                 _wires.push_back(temp);
             }//end of unsigned int input
+            //COMMENT ME OUT LATER
+            //cout << temp.GetVariableW() << " with bitwidth "<< temp.GetDataWidthW() << endl;
             check3 = iow;
             check4 = type;
             while(extra != "") {
                 temp.SetVariableW(extra);
                 _wires.push_back(temp);
                 lineStream >> extra;
+                //COMMENT ME OUT LATER
+                //cout << temp.GetVariableW() << " with bitwidth "<< temp.GetDataWidthW() << endl;
                 if(extra == temp.GetVariableW()){
                     break;
                 }
@@ -407,53 +416,53 @@ void verilogSim::WriteCommandsToFile() {
 
     //now we begin adding the inputs, they're all individual for now
     //if you figure out how to group them all by sizes props
-    for (auto c = 0; c < _inputs.size(); c++) {
+    for (auto & _input : _inputs) {
         outputFile << "input ";
 
         //tack on signed if the type is signed, unsigneds don't need to be declared
-        if (_inputs.at(c).GetDataTypeI() == 'I') {
+        if (_input.GetDataTypeI() == 'I') {
             outputFile << "signed ";
         }
 
         //add in the bitwidth part of the text
-        if (_inputs.at(c).GetDataWidthI() == 1) {
-            outputFile << _inputs.at(c).GetVariableI() << ";" << endl;
+        if (_input.GetDataWidthI() == 1) {
+            outputFile << _input.GetVariableI() << ";" << endl;
         } else {
-            outputFile << "[" << std::to_string(_inputs.at(c).GetDataWidthI() - 1) << ":0] " << _inputs.at(c).GetVariableI() << ";" << endl;
+            outputFile << "[" << std::to_string(_input.GetDataWidthI() - 1) << ":0] " << _input.GetVariableI() << ";" << endl;
         }
     }
 
     //outputs are also all on their own
-    for (auto d = 0; d < _outputs.size(); d++) {
+    for (auto & _output : _outputs) {
         outputFile << "output reg ";
 
         //tack on signed if the type is signed
-        if (_outputs.at(d).GetDataTypeO() == 'I') {
+        if (_output.GetDataTypeO() == 'I') {
             outputFile << "signed ";
         }
 
         //add in the bitwidth part
-        if (_outputs.at(d).GetDataWidthO() == 1) {
-            outputFile << _outputs.at(d).GetVariableO() << ";" << endl;
+        if (_output.GetDataWidthO() == 1) {
+            outputFile << _output.GetVariableO() << ";" << endl;
         } else {
-            outputFile << "[" << std::to_string(_outputs.at(d).GetDataWidthO() - 1) << ":0] " << _outputs.at(d).GetVariableO() << ";" << endl;
+            outputFile << "[" << std::to_string(_output.GetDataWidthO() - 1) << ":0] " << _output.GetVariableO() << ";" << endl;
         }
     }
 
     //wires are also all on their own
-    for (auto e = 0; e < _wires.size(); e++) {
-        outputFile << "output reg ";
+    for (auto w = 0; w < _wires.size() - 1; w++) {
+        outputFile << "wire ";
 
         //tack on signed if the type is signed
-        if (_wires.at(e).GetDataTypeW() == 'I') {
+        if (_wires.at(w).GetDataTypeW() == 'I') {
             outputFile << "signed ";
         }
 
         //add in the bitwidth part
-        if (_wires.at(e).GetDataWidthW() == 1) {
-            outputFile << _wires.at(e).GetVariableW() << ";" << endl;
+        if (_wires.at(w).GetDataWidthW() == 1) {
+            outputFile << _wires.at(w).GetVariableW() << ";" << endl;
         } else {
-            outputFile << "[" << std::to_string(_wires.at(e).GetDataWidthW() - 1) << ":0] " << _wires.at(e).GetVariableW() << ";" << endl;
+            outputFile << "[" << std::to_string(_wires.at(w).GetDataWidthW() - 1) << ":0] " << _wires.at(w).GetVariableW() << ";" << endl;
         }
     }
 
@@ -478,42 +487,52 @@ void verilogSim::WriteCommandsToFile() {
 
         //compare the first and second operands to find their bitwidths
         //starting with an inputs comparison
-        for (auto g = 0; g < _inputs.size(); g++) {
-            if (first == _inputs.at(g).GetVariableI()) {
-                fWidth = _inputs.at(g).GetDataWidthI();
+        for (auto & _input : _inputs) {
+            if (first == _input.GetVariableI()) {
+                fWidth = _input.GetDataWidthI();
                 //cout << "first got: " << _inputs.at(g).GetDataWidthI() << endl;
             }
-            if (second == _inputs.at(g).GetVariableI()) {
-                sWidth = _inputs.at(g).GetDataWidthI();
+            if (second == _input.GetVariableI()) {
+                sWidth = _input.GetDataWidthI();
                 //cout << "second got: " << _inputs.at(g).GetDataWidthI() << endl;
             }
         }
         //next an outputs comparison
-        for (auto h = 0; h < _outputs.size(); h++) {
+        for (auto & _output : _outputs) {
 //            if (out == _outputs.at(h).GetVariableO()) {
 //                cout << _outputs.at(0).GetVariableO() << endl;
 //                cout << "it entered the output check loop!" << endl;
 //            }
 
-            if (first == _outputs.at(h).GetVariableO()) {
-                fWidth = _outputs.at(h).GetDataWidthO();
+            if (first == _output.GetVariableO()) {
+                fWidth = _output.GetDataWidthO();
             }
-            if (second == _outputs.at(h).GetVariableO()) {
-                sWidth = _outputs.at(h).GetDataWidthO();
+            if (second == _output.GetVariableO()) {
+                sWidth = _output.GetDataWidthO();
             }
         }
         //finally a wires comparison
-        for (auto i = 0; i < _wires.size(); i++) {
-            if (first == _wires.at(i).GetVariableW()) {
-                fWidth = _wires.at(i).GetDataWidthW();
+        for (auto & _wire : _wires) {
+            auto temp1Width = _wire.GetDataWidthW();
+            if (first == _wire.GetVariableW()) {
+                //fWidth = _wire.GetDataWidthW();
+                fWidth = temp1Width;
+                //cout << "width for first is " << fWidth << endl;
             }
-            if (second == _wires.at(i).GetVariableW()) {
-                sWidth = _wires.at(i).GetDataWidthW();
+            auto temp2Width = _wire.GetDataWidthW();
+            if (second == _wire.GetVariableW()) {
+                //sWidth = _wire.GetDataWidthW();
+                sWidth = temp2Width;
+                //cout << "width for second is " << sWidth << endl;
             }
         }
 
         //now we do a comparison to find the bigger bitwidth
         bitWidth = std::max(fWidth, sWidth);
+
+        cout << "first Width is currently " << fWidth << endl;
+        cout << "second Width is currently " << sWidth << endl;
+        cout << "bitWidth is currently " << bitWidth << endl;
 
         //now a big ol chain for checking what the operation is and writing it
         if (_equations.at(f).GetOperation() == "+") {
@@ -541,6 +560,8 @@ void verilogSim::WriteCommandsToFile() {
         } else if (_equations.at(f).GetOperation() == "<<") {
             //FIX ME
             outputFile << "SHL #(" << bitWidth << ") Shl" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
+        } else if (_equations.at(f).GetOperation() == "") {
+            outputFile << "REG #(" << bitWidth << ") Reg" << f << "(" << first << ", " << "Clk, Rst, " << out << ");" << endl;
         }
     }
 
