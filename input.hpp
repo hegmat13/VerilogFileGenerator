@@ -28,6 +28,7 @@ private:
     std::vector<Outputs> _outputs;
     std::vector<Wires> _wires;
     std::vector<Equations> _equations;
+    std::vector<Registers> _registers;
     char* _inputFileName;
     char* _outputFileName;
     
