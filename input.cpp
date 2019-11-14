@@ -11,6 +11,7 @@
 #include "Outputs.hpp"
 #include "Wires.hpp"
 #include "Equations.hpp"
+#include "Registers.hpp"
 #include <string>
 #include <algorithm>
 
