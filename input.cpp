@@ -231,6 +231,79 @@ void verilogSim::ReadCommandsFromFile() {
 					}
 				}
 			}// end o
+			
+	//REGISTERS
+        if((iow == "register") && ((iow != check7) || (type != check8))){
+            Registers temp;
+            temp.SetVariableR(variable);
+            
+            if(firstLetter == 'I') {
+                
+                temp.SetDataTypeR('I');
+                firstNum = type.at(3);
+                
+                if((firstNum == '1')&& (len == 4)){
+                    temp.SetDataWidthR(1);
+                }
+                else if(firstNum == '2') {
+                    temp.SetDataWidthR(2);
+                }
+                else if(firstNum == '4'){
+                    temp.SetDataWidthR(4);
+                }
+                else if(firstNum == '8'){
+                    temp.SetDataWidthR(8);
+                }
+                else if((firstNum == '1') && (len == 5)){
+                    temp.SetDataWidthR(16);
+                }
+                else if(firstNum == '3') {
+                    temp.SetDataWidthR(32);
+                }
+                else if(firstNum == '6') {
+                    temp.SetDataWidthR(64);
+                }
+                _registers.push_back(temp);
+            }//end of signed int
+            
+            else if(firstLetter == 'U'){
+                temp.SetDataTypeR('U');
+                firstNum = type.at(4);
+                if((firstNum == '1')&& (len == 5)){
+                    temp.SetDataWidthR(1);
+                }
+                else if(firstNum == '2') {
+                    temp.SetDataWidthR(2);
+                }
+                else if(firstNum == '4'){
+                    temp.SetDataWidthR(4);
+                }
+                else if(firstNum == '8'){
+                    temp.SetDataWidthR(8);
+                }
+                else if((firstNum == '1') && (len == 6)){
+                    temp.SetDataWidthR(16);
+                }
+                else if(firstNum == '3') {
+                    temp.SetDataWidthR(32);
+                }
+                else if(firstNum == '6') {
+                    temp.SetDataWidthR(64);
+                }
+                _registers.push_back(temp);
+            }//end of unsigned int input
+            check7 = iow;
+            check8 = type;
+            while(extra != "") {
+                temp.SetVariableR(extra);
+                _registers.push_back(temp);
+                lineStream >> extra;
+                if(extra == temp.GetVariableR()){
+                    break;
+                }
+            }
+        }//end registers
+
 
 
 			//WIRES
