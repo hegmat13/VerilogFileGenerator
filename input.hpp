@@ -36,7 +36,7 @@ private:
 public:
     void run(char* _inputFileName, char* _outputFileName);
     void ReadCommandsFromFile();
-    void TestValid();
+    unsigned int TestValid();
     void WriteCommandsToFile();
 
 };
