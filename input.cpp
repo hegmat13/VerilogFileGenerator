@@ -584,7 +584,7 @@ void verilogSim::WriteCommandsToFile() {
 		outputFile << "wire ";
 
 		//tack on signed if the type is signed
-		if (_wires.at(w).GetDataTypeW() == 'I') {     //Segmentation Fault
+		if (_wires.at(w).GetDataTypeW() == 'I') {     
 			outputFile << "signed ";
 		}
 
@@ -598,12 +598,13 @@ void verilogSim::WriteCommandsToFile() {
 	}
 
 	cout << "The _register.size() - 1 is: " << _registers.size() - 1 << endl;
+
 	//Registers are also all on their own
 	for (auto r = 0; r < _registers.size() - 0; r++) {
 		outputFile << "register ";
 
 		//tack on signed if the type is signed
-		if (_registers.at(r).GetDataTypeR() == 'I') {     //Segmentation Fault
+		if (_registers.at(r).GetDataTypeR() == 'I') {     
 			outputFile << "signed ";
 		}
 
@@ -625,12 +626,21 @@ void verilogSim::WriteCommandsToFile() {
 		//these variables are for getting the bitwidth that is placed in parentheses like #(64)
 		auto first = _equations.at(f).GetFirst();
 		auto firstType = 0;							//First Variable Type: 0 = input, 1 = wire, initialized to input
-		auto firstVariableI = _inputs.at(0);          //initialize first input to first input in vector
-		auto firstVariableW = _wires.at(0);			//intialize first wire variable to first wire in vector
+
 		auto second = _equations.at(f).GetSecond();
 		auto secondType = 0;						//Second Variable Type: 0 = input, 1 = wire, initialized to input
-		auto secondVariableI = _inputs.at(0);		//initialize second variable input to first input in vector
-		auto secondVariableW = _wires.at(0);		//initialize second variable wire to first wire in vector
+
+		Inputs initI;   //Empty Initialization Variables 
+		Wires initW;
+		Registers initR; 
+		auto firstVariableI = initI;          //initialize first input to first input in vector
+		auto firstVariableW = initW;			//intialize first wire variable to first wire in vector
+		auto firstVariableR = initR;		//Initialise first register variable to first register in vector 
+		auto secondVariableI = initI;		//initialize second variable input to first input in vector
+		auto secondVariableW = initW;		//initialize second variable wire to first wire in vector
+		auto secondVariableR = initR;   //initialize second variable register to first register in vector
+
+		auto op = _equations.at(f).GetOperation(); 
 		auto out = _equations.at(f).GetOut();
 		auto muxSel = _equations.at(f).GetMuxSel();
 		auto fWidth = 0;
@@ -640,6 +650,9 @@ void verilogSim::WriteCommandsToFile() {
 		auto bitWidthc = 0;  //Bitwidth of output of comparator 
 		auto difference = 0; //Difference between bitwidth of output and input
 		auto sign = 0; //Added this for keeping track of the sign of the function 
+
+		
+
 
 //        cout << _inputs.at(0).GetVariableI() << endl;
 //        cout << _inputs.at(1).GetVariableI() << endl;
@@ -708,11 +721,43 @@ void verilogSim::WriteCommandsToFile() {
 				cout << "width for second is " << sWidth << endl;
 			}
 
-			if (out == _wire.GetVariableW()) {     //If the wire is a signed wire, set sign to true
+			if (out == _wire.GetVariableW()) {     //If the output of the equation is a signed wire, set sign to true 
 				if (_wire.GetDataTypeW() == 'I') {
 					sign = 1;
 				}
 				oWidth = _wire.GetDataWidthW();   //Set width of output 
+			}
+		}
+
+		for (auto& _register : _registers) {
+			auto tempVariableR = _register.GetVariableR();
+
+			/*if (tempVariableW.size() == 2)
+			{
+				tempVariableW.erase(_wire.GetVariableW().length() - 1);
+			}  //Erase Extra Space Character */
+
+			if (tempVariableR.compare(first) == 0) {
+				fWidth = _register.GetDataWidthR();
+				firstVariableR = _register;
+				firstType = 2;
+				//fWidth = temp1Width;
+				//cout << "width for first is " << fWidth << endl;
+			}
+
+			if (tempVariableR.compare(second) == 0) {
+				sWidth = _register.GetDataWidthR();
+				secondVariableR = _register;
+				secondType = 2;
+				//sWidth = temp2Width;
+				//cout << "width for second is " << sWidth << endl;
+			}
+
+			if (out == _register.GetVariableR()) {     //If the output of the equation is a register 
+				if (_register.GetDataTypeR() == 'I') {  //If the register is signed, set signed to true 
+					sign = 1;
+				}
+				oWidth = _register.GetDataWidthR();   //Set width of output 
 			}
 		}
 
@@ -737,67 +782,201 @@ void verilogSim::WriteCommandsToFile() {
 		bitWidth = oWidth;                             //Bitwidth of all components besides comparator is size of output
 		bitWidthc = std::max(fWidth, sWidth);          //Bitwidth of comparator is max of inputs 
 
-		if (firstType == 0) {  //If the first variable is of type input
-			if ((firstVariableI.GetDataWidthI() < oWidth) && (firstVariableI.GetDataTypeI() == 'I')) {  //If first input is fewer bits than output, signed, and smaller than owidth, then sign extend it
-				difference = oWidth - firstVariableI.GetDataWidthI();
-				first = "{{" + std::to_string(difference) + '{' + first + "[" + std::to_string(difference - 1) + "]}}, " + first + '}';
+		cout << op; 
+		
+		if ((op == ">") || (op == "==") || (op == "<")) {  //If operation is  a comparator, use the bitWidthc
+			if (firstType == 0) {  //If the first variable is of type input
+				if ((firstVariableI.GetDataWidthI() < bitWidthc) && (firstVariableI.GetDataTypeI() == 'I')) {  //If first input is fewer bits than output, signed, and smaller than owidth, then sign extend it
+					difference = bitWidthc - firstVariableI.GetDataWidthI();
+					first = "{{" + std::to_string(difference) + '{' + first + "[" + std::to_string(difference - 1) + "]}}, " + first + '}';
+				}
+				if ((firstVariableI.GetDataWidthI() < bitWidthc) && (firstVariableI.GetDataTypeI() == 'U')) { //If first input is fewer bits than output and unsigned, and smaller than owidth , then pad with zeros
+					difference = bitWidthc - firstVariableI.GetDataWidthI();
+					first = "{" + std::to_string(difference) + "'b0, " + first + "}";
+				}
+				if ((firstVariableI.GetDataWidthI() > bitWidthc)) {   //If first input has a wider bit width than output, connect least significant bits
+					difference = firstVariableI.GetDataWidthI() - bitWidthc;
+					first = first + "[" + std::to_string(firstVariableI.GetDataWidthI() - difference - 1) + ":0]";
+				}
+				//y[15:0]
 			}
-			if ((firstVariableI.GetDataWidthI() < oWidth) && (firstVariableI.GetDataTypeI() == 'U')) { //If first input is fewer bits than output and unsigned, and smaller than owidth , then pad with zeros
-				difference = oWidth - firstVariableI.GetDataWidthI();
-				first = "{" + std::to_string(difference) + "'b0, " + first + "}";
+			else if (firstType == 1) { //If the first variable of equation is of type wire
+				if ((firstVariableW.GetDataWidthW() < bitWidthc) && (firstVariableW.GetDataTypeW() == 'I')) { //If first wire is fewer bits than output and signed, then sign extend it
+					difference = bitWidthc - firstVariableW.GetDataWidthW();
+					first = "{{" + std::to_string(difference) + '{' + first + "[" + std::to_string(difference - 1) + "]}}, " + first + '}';
+				}
+				if ((firstVariableW.GetDataWidthW() < bitWidthc) && (firstVariableW.GetDataTypeW() == 'U')) { //If first wire is fewer bits than output and unsigned, then pad with zeros
+					difference = bitWidthc - firstVariableW.GetDataWidthW();
+					first = "{" + std::to_string(difference) + "'b0, " + first + "}";
+				}
+				if ((firstVariableW.GetDataWidthW() > bitWidthc)) { //If first input has a wider bit width than output, connect least significant bits
+					difference = firstVariableW.GetDataWidthW() - bitWidthc;
+					first = first + "[" + std::to_string(firstVariableW.GetDataWidthW() - difference - 1) + ":0]";
+				}
 			}
-			if ((firstVariableI.GetDataWidthI() > oWidth)) {   //If first input has a wider bit width than output, connect least significant bits
-				difference = firstVariableI.GetDataWidthI() - oWidth;
-				first = first + "[" + std::to_string(firstVariableI.GetDataWidthI() - difference - 1) + ":0]";
+
+			else if (firstType == 2) { //If the first variable of equation is of type register 
+				if ((firstVariableR.GetDataWidthR() < bitWidthc) && (firstVariableR.GetDataTypeR() == 'I')) { //If first register is fewer bits than output and signed, then sign extend it
+					difference = bitWidthc - firstVariableR.GetDataWidthR();
+					first = "{{" + std::to_string(difference) + '{' + first + "[" + std::to_string(difference - 1) + "]}}, " + first + '}';
+				}
+				if ((firstVariableR.GetDataWidthR() < bitWidthc) && (firstVariableR.GetDataTypeR() == 'U')) { //If the first register is fewer bits than output and unsigned, then pad with zeros
+					difference = bitWidthc - firstVariableR.GetDataWidthR();
+					first = "{" + std::to_string(difference) + "'b0, " + first + "}";
+				}
+				if ((firstVariableR.GetDataWidthR() > bitWidthc)) { //If first input has a wider bit width than output, connect least significant bits
+					difference = firstVariableR.GetDataWidthR() - bitWidthc;
+					first = first + "[" + std::to_string(firstVariableR.GetDataWidthR() - difference - 1) + ":0]";
+				}
 			}
-			//y[15:0]
-		}
-		else {
-			if ((firstVariableW.GetDataWidthW() < oWidth) && (firstVariableW.GetDataTypeW() == 'I')) { //If first wire is fewer bits than output and signed, then sign extend it
-				difference = oWidth - firstVariableW.GetDataWidthW();
-				first = "{{" + std::to_string(difference) + '{' + first + "[" + std::to_string(difference - 1) + "]}}, " + first + '}';
+
+
+			if (secondType == 0) {  //If the second variable is of type input
+
+				if ((secondVariableI.GetDataWidthI() < bitWidthc) && (secondVariableI.GetDataTypeI() == 'I')) { //If second input is fewer bits than output and signed, sign extend
+					difference = bitWidthc - secondVariableI.GetDataWidthI();
+					second = "{{" + std::to_string(difference) + '{' + second + "[" + std::to_string(difference - 1) + "]}}, " + second + '}';
+				}
+
+				if ((secondVariableI.GetDataWidthI() < bitWidthc) && (secondVariableI.GetDataTypeI() == 'U')) { //If second input is fewer bits than output and unsigned, pad with zeros
+					difference = bitWidthc - secondVariableI.GetDataWidthI();
+					second = "{" + std::to_string(difference) + "'b0, " + second + "}";
+				}
+				if ((secondVariableI.GetDataWidthI() > bitWidthc)) {   //If second input has a wider bit width than output, connect least significant bits
+					difference = secondVariableI.GetDataWidthI() - bitWidthc;
+					second = second + "[" + std::to_string(secondVariableI.GetDataWidthI() - difference - 1) + ":0]";
+				}
 			}
-			if ((firstVariableW.GetDataWidthW() < oWidth) && (firstVariableW.GetDataTypeW() == 'U')) { //If first wire is fewer bits than output and unsigned, then pad with zeros
-				difference = oWidth - firstVariableW.GetDataWidthW();
-				first = "{" + std::to_string(difference) + "'b0, " + first + "}";
+			else if (secondType == 1) { //If the second variable is of type wire
+				if ((secondVariableW.GetDataWidthW() < bitWidthc) && (secondVariableW.GetDataTypeW() == 'I')) { //If second wire is fewer bits than output and signed, sign extend
+					difference = bitWidthc - secondVariableW.GetDataWidthW();
+					second = "{{" + std::to_string(difference) + '{' + second + "[" + std::to_string(difference - 1) + "]}}, " + second + '}';
+				}
+
+				if ((secondVariableW.GetDataWidthW() < bitWidthc) && (secondVariableW.GetDataTypeW() == 'U')) { //If second wire is fewer bits than output and unsigned, pad with zeros
+					difference = bitWidthc - secondVariableW.GetDataWidthW();
+					second = "{" + std::to_string(difference) + "'b0, " + second + "}";
+				}
+				if ((secondVariableW.GetDataWidthW() > bitWidthc)) {   //If second wire has a wider bit width than output, connect least significant bits
+					difference = secondVariableW.GetDataWidthW() - bitWidthc;
+					second = second + "[" + std::to_string(secondVariableW.GetDataWidthW() - difference - 1) + ":0]";
+				}
 			}
-			if ((firstVariableW.GetDataWidthW() > oWidth)) { //If first input has a wider bit width than output, connect least significant bits
-				difference = firstVariableW.GetDataWidthW() - oWidth;
-				first = first + "[" + std::to_string(firstVariableW.GetDataWidthW() - difference - 1) + ":0]";
+
+			else if (secondType == 2) { //If the second variable is of type register
+				if ((secondVariableR.GetDataWidthR() < bitWidthc) && (secondVariableR.GetDataTypeR() == 'I')) { //If second wire is fewer bits than output and signed, sign extend
+					difference = bitWidthc - secondVariableR.GetDataWidthR();
+					second = "{{" + std::to_string(difference) + '{' + second + "[" + std::to_string(difference - 1) + "]}}, " + second + '}';
+				}
+
+				if ((secondVariableR.GetDataWidthR() < bitWidthc) && (secondVariableR.GetDataTypeR() == 'U')) { //If second wire is fewer bits than output and unsigned, pad with zeros
+					difference = bitWidthc - secondVariableR.GetDataWidthR();
+					second = "{" + std::to_string(difference) + "'b0, " + second + "}";
+				}
+				if ((secondVariableR.GetDataWidthR() > bitWidthc)) {   //If second wire has a wider bit width than output, connect least significant bits
+					difference = secondVariableR.GetDataWidthR() - bitWidthc;
+					second = second + "[" + std::to_string(secondVariableR.GetDataWidthR() - difference - 1) + ":0]";
+				}
 			}
 		}
 
-		if (secondType == 0) {  //If the second variable is of type input
-
-			if ((secondVariableI.GetDataWidthI() < oWidth) && (secondVariableI.GetDataTypeI() == 'I')) { //If second input is fewer bits than output and signed, sign extend
-				difference = oWidth - secondVariableI.GetDataWidthI();
-				second = "{{" + std::to_string(difference) + '{' + second + "[" + std::to_string(difference - 1) + "]}}, " + second + '}';
+		else {  //If operation is not a comparator, use the oWidth
+			if (firstType == 0) {  //If the first variable is of type input
+				if ((firstVariableI.GetDataWidthI() < oWidth) && (firstVariableI.GetDataTypeI() == 'I')) {  //If first input is fewer bits than output, signed, and smaller than owidth, then sign extend it
+					difference = oWidth - firstVariableI.GetDataWidthI();
+					first = "{{" + std::to_string(difference) + '{' + first + "[" + std::to_string(difference - 1) + "]}}, " + first + '}';
+				}
+				if ((firstVariableI.GetDataWidthI() < oWidth) && (firstVariableI.GetDataTypeI() == 'U')) { //If first input is fewer bits than output and unsigned, and smaller than owidth , then pad with zeros
+					difference = oWidth - firstVariableI.GetDataWidthI();
+					first = "{" + std::to_string(difference) + "'b0, " + first + "}";
+				}
+				if ((firstVariableI.GetDataWidthI() > oWidth)) {   //If first input has a wider bit width than output, connect least significant bits
+					difference = firstVariableI.GetDataWidthI() - oWidth;
+					first = first + "[" + std::to_string(firstVariableI.GetDataWidthI() - difference - 1) + ":0]";
+				}
+				//y[15:0]
+			}
+			else if (firstType == 1) { //If the first variable of equation is of type wire
+				if ((firstVariableW.GetDataWidthW() < oWidth) && (firstVariableW.GetDataTypeW() == 'I')) { //If first wire is fewer bits than output and signed, then sign extend it
+					difference = oWidth - firstVariableW.GetDataWidthW();
+					first = "{{" + std::to_string(difference) + '{' + first + "[" + std::to_string(difference - 1) + "]}}, " + first + '}';
+				}
+				if ((firstVariableW.GetDataWidthW() < oWidth) && (firstVariableW.GetDataTypeW() == 'U')) { //If first wire is fewer bits than output and unsigned, then pad with zeros
+					difference = oWidth - firstVariableW.GetDataWidthW();
+					first = "{" + std::to_string(difference) + "'b0, " + first + "}";
+				}
+				if ((firstVariableW.GetDataWidthW() > oWidth)) { //If first input has a wider bit width than output, connect least significant bits
+					difference = firstVariableW.GetDataWidthW() - oWidth;
+					first = first + "[" + std::to_string(firstVariableW.GetDataWidthW() - difference - 1) + ":0]";
+				}
 			}
 
-			if ((secondVariableI.GetDataWidthI() < oWidth) && (secondVariableI.GetDataTypeI() == 'U')) { //If second input is fewer bits than output and unsigned, pad with zeros
-				difference = oWidth - secondVariableI.GetDataWidthI();
-				second = "{" + std::to_string(difference) + "'b0, " + second + "}";
+			else if (firstType == 2) { //If the first variable of equation is of type register 
+				if ((firstVariableR.GetDataWidthR() < oWidth) && (firstVariableR.GetDataTypeR() == 'I')) { //If first register is fewer bits than output and signed, then sign extend it
+					difference = oWidth - firstVariableR.GetDataWidthR();
+					first = "{{" + std::to_string(difference) + '{' + first + "[" + std::to_string(difference - 1) + "]}}, " + first + '}';
+				}
+				if ((firstVariableR.GetDataWidthR() < oWidth) && (firstVariableR.GetDataTypeR() == 'U')) { //If the first register is fewer bits than output and unsigned, then pad with zeros
+					difference = oWidth - firstVariableR.GetDataWidthR();
+					first = "{" + std::to_string(difference) + "'b0, " + first + "}";
+				}
+				if ((firstVariableR.GetDataWidthR() > oWidth)) { //If first input has a wider bit width than output, connect least significant bits
+					difference = firstVariableR.GetDataWidthR() - oWidth;
+					first = first + "[" + std::to_string(firstVariableR.GetDataWidthR() - difference - 1) + ":0]";
+				}
 			}
-			if ((secondVariableI.GetDataWidthI() > oWidth)) {   //If second input has a wider bit width than output, connect least significant bits
-				difference = secondVariableI.GetDataWidthI() - oWidth;
-				second = second + "[" + std::to_string(secondVariableI.GetDataWidthI() - difference - 1) + ":0]";
+
+
+			if (secondType == 0) {  //If the second variable is of type input
+
+				if ((secondVariableI.GetDataWidthI() < oWidth) && (secondVariableI.GetDataTypeI() == 'I')) { //If second input is fewer bits than output and signed, sign extend
+					difference = oWidth - secondVariableI.GetDataWidthI();
+					second = "{{" + std::to_string(difference) + '{' + second + "[" + std::to_string(difference - 1) + "]}}, " + second + '}';
+				}
+
+				if ((secondVariableI.GetDataWidthI() < oWidth) && (secondVariableI.GetDataTypeI() == 'U')) { //If second input is fewer bits than output and unsigned, pad with zeros
+					difference = oWidth - secondVariableI.GetDataWidthI();
+					second = "{" + std::to_string(difference) + "'b0, " + second + "}";
+				}
+				if ((secondVariableI.GetDataWidthI() > oWidth)) {   //If second input has a wider bit width than output, connect least significant bits
+					difference = secondVariableI.GetDataWidthI() - oWidth;
+					second = second + "[" + std::to_string(secondVariableI.GetDataWidthI() - difference - 1) + ":0]";
+				}
+			}
+			else if (secondType == 1) { //If the second variable is of type wire
+				if ((secondVariableW.GetDataWidthW() < oWidth) && (secondVariableW.GetDataTypeW() == 'I')) { //If second wire is fewer bits than output and signed, sign extend
+					difference = oWidth - secondVariableW.GetDataWidthW();
+					second = "{{" + std::to_string(difference) + '{' + second + "[" + std::to_string(difference - 1) + "]}}, " + second + '}';
+				}
+
+				if ((secondVariableW.GetDataWidthW() < oWidth) && (secondVariableW.GetDataTypeW() == 'U')) { //If second wire is fewer bits than output and unsigned, pad with zeros
+					difference = oWidth - secondVariableW.GetDataWidthW();
+					second = "{" + std::to_string(difference) + "'b0, " + second + "}";
+				}
+				if ((secondVariableW.GetDataWidthW() > oWidth)) {   //If second wire has a wider bit width than output, connect least significant bits
+					difference = secondVariableW.GetDataWidthW() - oWidth;
+					second = second + "[" + std::to_string(secondVariableW.GetDataWidthW() - difference - 1) + ":0]";
+				}
+			}
+
+			else if (secondType == 2) { //If the second variable is of type register
+				if ((secondVariableR.GetDataWidthR() < oWidth) && (secondVariableR.GetDataTypeR() == 'I')) { //If second wire is fewer bits than output and signed, sign extend
+					difference = oWidth - secondVariableR.GetDataWidthR();
+					second = "{{" + std::to_string(difference) + '{' + second + "[" + std::to_string(difference - 1) + "]}}, " + second + '}';
+				}
+
+				if ((secondVariableR.GetDataWidthR() < oWidth) && (secondVariableR.GetDataTypeR() == 'U')) { //If second wire is fewer bits than output and unsigned, pad with zeros
+					difference = oWidth - secondVariableR.GetDataWidthR();
+					second = "{" + std::to_string(difference) + "'b0, " + second + "}";
+				}
+				if ((secondVariableR.GetDataWidthR() > oWidth)) {   //If second wire has a wider bit width than output, connect least significant bits
+					difference = secondVariableR.GetDataWidthR() - oWidth;
+					second = second + "[" + std::to_string(secondVariableR.GetDataWidthR() - difference - 1) + ":0]";
+				}
 			}
 		}
-		else {
-			if ((secondVariableW.GetDataWidthW() < oWidth) && (secondVariableW.GetDataTypeW() == 'I')) { //If second wire is fewer bits than output and signed, sign extend
-				difference = oWidth - secondVariableW.GetDataWidthW();
-				second = "{{" + std::to_string(difference) + '{' + second + "[" + std::to_string(difference - 1) + "]}}, " + second + '}';
-			}
 
-			if ((secondVariableW.GetDataWidthW() < oWidth) && (secondVariableW.GetDataTypeW() == 'U')) { //If second wire is fewer bits than output and unsigned, pad with zeros
-				difference = oWidth - secondVariableW.GetDataWidthW();
-				second = "{" + std::to_string(difference) + "'b0, " + second + "}";
-			}
-			if ((secondVariableW.GetDataWidthW() > oWidth)) {   //If second wire has a wider bit width than output, connect least significant bits
-				difference = secondVariableW.GetDataWidthW() - oWidth;
-				second = second + "[" + std::to_string(secondVariableW.GetDataWidthW() - difference - 1) + ":0]";
-			}
-		}
+
 
 
 		// cout << "first Width is currently " << fWidth << endl;
