@@ -7,4 +7,4 @@ set(CMAKE_CXX_FLAGS_MINSIZEREL "-std=c++11")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-std=c++11")
 set(CMAKE_CXX_FLAGS_RELEASE "-std=c++11")
 
-add_executable(dpgen main.cpp Equations.cpp input.cpp Inputs.cpp Outputs.cpp Wires.cpp)
+add_executable(dpgen main.cpp Equations.cpp input.cpp Inputs.cpp Outputs.cpp Wires.cpp Registers.cpp)
