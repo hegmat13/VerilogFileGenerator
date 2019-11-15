@@ -431,68 +431,170 @@ void verilogSim::ReadCommandsFromFile() {
 
 }
 
-void verilogSim::TestValid() {
+unsigned int verilogSim::TestValid() {
+    
+    unsigned long int lenI, lenO, lenW, lenE, lenR;
+    unsigned int i = 0, j = 0;
+    
+    Equations temp;
+    lenE = _equations.size();
+    while (i < lenE) {
+        temp = _equations.at(i);
+        string test = temp.GetOperation();
+        
+        if ((temp.GetOperation() == "+") || (temp.GetOperation() == "-") || (temp.GetOperation() == "*") || (temp.GetOperation() == ">") || (temp.GetOperation() == "") || (temp.GetOperation() == "<") || (temp.GetOperation() == "?") || (temp.GetOperation() == ">>") || (temp.GetOperation() == "<<") || (temp.GetOperation() == "==")) {
+            //here the equations is invalid if the operator so we just need to say invalid or something idk
+            //what teh requirements are
+            //cout << "invaldi operation" << endl;
+            break;
+        }
+        else {
+            return (1);
+        }
+        i++;
+    }
+    
+    i = 0;
+    int checkI = 0, checkO = 0, checkW = 0, checkR = 0;
+    
+    lenI = _inputs.size();
+    lenO = _outputs.size();
+    lenW = _wires.size();
+    lenE = _equations.size();
+    lenR = _registers.size();
+    
+    
+    std::vector<string> eqVars, allVars;
 
-	unsigned long int lenI, lenO, lenW, lenE;
-	unsigned int i = 0, j = 0;
+    for(i = 0; i < lenI; i++) {
+        allVars.push_back(_inputs.at(i).GetVariableI());
+    }
+    for(i = 0; i < lenO; i++) {
+        allVars.push_back(_outputs.at(i).GetVariableO());
+    }
+    for(i = 0; i < lenW; i++) {
+        allVars.push_back(_wires.at(i).GetVariableW());
+    }
+    for(i = 0; i < lenR; i++) {
+        allVars.push_back(_registers.at(i).GetVariableR());
+    }
+    eqVars.push_back(_equations.at(0).GetOut());
+    unsigned int len = eqVars.size();
+    //eqVars.push_back(_equations.at(i).GetOut());
+    //eqVars.push_back(_equations.at(i).GetFirst());
+    //eqVars.push_back(_equations.at(i).GetSecond());
+    for(i = 0; i < lenE; i++) {
+        if (std::find(eqVars.begin(), eqVars.end(), _equations.at(i).GetOut()) == eqVars.end()) {
+            // someName not in name, add it
+            eqVars.push_back(_equations.at(i).GetOut());
+        }
 
-	Equations temp;
-	lenE = _equations.size();
-	while (i < lenE) {
-		temp = _equations.at(i);
+        if (std::find(eqVars.begin(), eqVars.end(), _equations.at(i).GetFirst()) == eqVars.end()) {
+            // someName not in name, add it
+            eqVars.push_back(_equations.at(i).GetFirst());
+        }
+        if (std::find(eqVars.begin(), eqVars.end(), _equations.at(i).GetSecond()) == eqVars.end()) {
+            // someName not in name, add it
+            eqVars.push_back(_equations.at(i).GetSecond());
+        }
 
-		if ((temp.GetOperation() != "+") || (temp.GetOperation() != "-") || (temp.GetOperation() != "*") || (temp.GetOperation() != ">") || (temp.GetOperation() != "") || (temp.GetOperation() != "<") || (temp.GetOperation() != "?") || (temp.GetOperation() != ">>") || (temp.GetOperation() != "<<") || (temp.GetOperation() != "==")) { //here the equations is invalid if the operator so we just need to say invalid or something idk
-			//what teh requirements are
-			return;
-		}
-		i++;
-	}
-
-	i = 0;
-	int check = 0;
-
-	lenI = _inputs.size();
-	lenO = _outputs.size();
-	lenW = _wires.size();
-	lenE = _equations.size();
-
-	Inputs tempI;
-	Outputs tempO;
-	Wires tempW;
-	//we have to loop through each equations first and second variable and
-	// check it with every output,input, and wire variable
-	//if we find it in one of those three we are good if not its invalid
-
-	while (i < lenE) {
-		temp = _equations.at(i);
-		while (j < lenI) {
-			if ((temp.GetFirst() == tempI.GetVariableI()) || (temp.GetSecond() == tempI.GetVariableI())) {
-				check = 1;
-			}
-			j++;
-		}
-		j = 0;
-		while (j < lenO) {
-			if ((temp.GetFirst() == tempO.GetVariableO()) || (temp.GetSecond() == tempO.GetVariableO())) {
-				check = 1;
-			}
-			j++;
-		}
-		j = 0;
-		while (j < lenO) {
-			if ((temp.GetFirst() == tempO.GetVariableO()) || (temp.GetSecond() == tempO.GetVariableO())) {
-				check = 1;
-			}
-			j++;
-		}
-		j = 0;
-		if (check == 0) {
-			//here one of the equations is using an input/output/wire that isnt declared
-			// so we need to output that error accordingly
-			return;
-		}
-		i++;
-	}
+        }
+    
+//    for(i=0;i<eqVars.size();i++){
+//        cout << eqVars.at(i);
+//    }
+    int finalCheck = 0;
+    string missingVar = "";
+    
+    for(i=0;i<eqVars.size() - 1;i++){
+        finalCheck = 0;
+//        if(i == eqVars.size() - 1){
+//            cout << "vfffff";
+//        }
+        for(j=0;j<allVars.size();j++){
+            if(eqVars.at(i) == allVars.at(j)){
+                finalCheck = 1;
+            }
+            if ((finalCheck == 0) && (j == allVars.size() - 1)){
+                cout << "You have an undeclared varibale in your equations, (" << eqVars.at(i) << ")" << endl;
+                missingVar = eqVars.at(i);
+                return (2);
+                
+                
+            }
+       }
+    }
+//    Inputs tempI;
+//    Outputs tempO;
+//    Wires tempW;
+//    Registers tempR;
+//
+//
+//    unsigned int valid = 1;
+////    Inputs tempI;
+////    Outputs tempO;
+////    Wires tempW;
+////    Registers tempR;
+//    //we have to loop through each equations first and second variable and
+//    // check it with every output,input, and wire variable
+//    //if we find it in one of those three we are good if not its invalid
+//
+//    while (i < lenE) {
+//        temp = _equations.at(i);
+//        while (j < lenI) {
+//            tempI = _inputs.at(j);
+//            if ((temp.GetFirst() == tempI.GetVariableI()) || (temp.GetSecond() == tempI.GetVariableI())) {
+//                checkI++;
+//                break;
+//            }
+//            j++;
+//        }
+//        j = 0;
+//        while (j < lenO) {
+//            tempO = _outputs.at(j);
+//            if ((temp.GetFirst() == tempO.GetVariableO()) || (temp.GetSecond() == tempO.GetVariableO()) || temp.GetOut() == tempO.GetVariableO()) {
+//                checkO++;
+//                break;
+//            }
+//            j++;
+//        }
+//        j = 0;
+//        while (j < lenW) {
+//            tempW = _wires.at(j);
+//            if ((temp.GetFirst() == tempW.GetVariableW()) || (temp.GetSecond() == tempW.GetVariableW()) || temp.GetOut() == tempW.GetVariableW()) {
+//                checkW++;
+//                break;
+//            }
+//            j++;
+//        }
+//        j = 0;
+//        while (j < lenR) {
+//            tempR = _registers.at(j);
+//            if ((temp.GetFirst() == tempR.GetVariableR()) || (temp.GetSecond() == tempR.GetVariableR())  || temp.GetOut() == tempR.GetVariableR()) {
+//                checkR++;
+//                break;
+//            }
+//            j++;
+//        }
+//        j = 0;
+//
+//        i++;
+//    }
+//    if (checkI == 0) {
+//        //here one of the equations is using an input/output/wire that isnt declared
+//        // so we need to output that error accordingly
+//        return (2);
+//    }
+//    else if(checkO == 0) {
+//        return (3);
+//    }
+//    else if(checkW == 0) {
+//        return (4);
+//    }
+//    else if(checkR == 0) {
+//        return (5);
+//    }
+    return 0;
 }
 
 void verilogSim::WriteCommandsToFile() {
