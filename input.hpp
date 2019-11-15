@@ -21,9 +21,10 @@
 #include "Outputs.hpp"
 #include "Wires.hpp"
 #include "Equations.hpp"
+#include "Registers.hpp"
 
 class verilogSim {
-private:
+private: 
     std::vector<Inputs> _inputs;
     std::vector<Outputs> _outputs;
     std::vector<Wires> _wires;
