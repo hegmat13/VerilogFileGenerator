@@ -27,8 +27,13 @@ int main(int argc, char* argv[]) {
 	verilogSim sim;
 	sim.run(argv[1], argv[2]);
 	sim.ReadCommandsFromFile();
-	sim.TestValid();
-	sim.WriteCommandsToFile();
+	valid = sim.TestValid();
+    	if(valid == 1) {
+        cout << "There is an invalid operator in your equations" << endl;
+    	}
+    	else if(valid == 0) {
+    	sim.WriteCommandsToFile();
+    	}
 	//return 0;
 	//}
 
