@@ -17,7 +17,7 @@ using namespace std;
 
 int main(int argc, char* argv[]) {
 	// console out the names of the files coming in from the terminal 
-	cout << "Argument 1 is : " << argv[1] << endl;
+    cout << "Argument 1 is : " << argv[1] << endl;
     cout << "Argument 2 is : " << argv[2] << endl;
 	//
 
