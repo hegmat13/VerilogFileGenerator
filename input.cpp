@@ -1037,27 +1037,27 @@ void verilogSim::WriteCommandsToFile() {
 		}
 		else if ((_equations.at(f).GetOperation() == ">") && (sign == 0)) {
 			outputFile << "COMP #(" << bitWidthc << ") Comp" << f << "(" << first << ", " << second << ", " << out << ", " <<
-				"unconnected_received_data" << ", " << "unconnected_received_data" << ");" << endl;
+				"0" << ", " << "0" << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == "<") && (sign == 0)) {
 			outputFile << "COMP #(" << bitWidthc << ") Comp" << f << "(" << first << ", " << second << ", " <<
-				"unconnected_received_data" << ", " << out << ", " << "unconnected_received_data" << ");" << endl;
+				"0" << ", " << out << ", " << "0" << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == "==") && (sign == 0)) {
 			outputFile << "COMP #(" << bitWidthc << ") Comp" << f << "(" << first << ", " << second << ", " <<
-				"unconnected_received_data" << ", " << "unconnected_received_data" << ", " << out << ");" << endl;
+				"0" << ", " << "0" << ", " << out << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == ">") && (sign == 1)) {
 			outputFile << "COMP #(" << bitWidthc << ") SComp" << f << "(" << first << ", " << second << ", " << out << ", " <<
-				"unconnected_received_data" << ", " << "unconnected_received_data" << ");" << endl;
+				"0" << ", " << "0" << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == "<") && (sign == 1)) {
 			outputFile << "COMP #(" << bitWidthc << ") SComp" << f << "(" << first << ", " << second << ", " <<
-				"unconnected_received_data" << ", " << out << ", " << "unconnected_received_data" << ");" << endl;
+				"0" << ", " << out << ", " << "0" << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == "==") && (sign == 1)) {
 			outputFile << "COMP #(" << bitWidthc << ") SComp" << f << "(" << first << ", " << second << ", " <<
-				"unconnected_received_data" << ", " << "unconnected_received_data" << ", " << out << ");" << endl;
+				"0" << ", " << "0" << ", " << out << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == "?") && (sign == 0)) {
 			//FIX ME
@@ -1084,10 +1084,10 @@ void verilogSim::WriteCommandsToFile() {
 			outputFile << "SHL #(" << bitWidth << ") SShl" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == "") && (sign == 0)) {
-			outputFile << "REG #(" << bitWidth << ") Reg" << f << "(" << first << ", " << "Clk, Rst, " << out << ");" << endl;
+			outputFile << "REG #(" << bitWidth << ") Reg" << f << "(" << first << ", " << "0, 0, " << out << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == "") && (sign == 1)) {
-			outputFile << "REG #(" << bitWidth << ") SReg" << f << "(" << first << ", " << "Clk, Rst, " << out << ");" << endl;
+			outputFile << "REG #(" << bitWidth << ") SReg" << f << "(" << first << ", " << "0, 0, " << out << ");" << endl;
 		}
 	}
 
