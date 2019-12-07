@@ -1,0 +1,21 @@
+﻿1. Init() (Started by Sai and Chris)
+   1. Create empty .v file
+   2. Open netlist.txt
+   3. Call parse()
+1. Parsing elements (inputs,outputs,reg, etc.) (Try to have simple working code by 10/26 - Spearheaded by John)
+   1. A vector of “signal” class type. It stores
+      1. Signal type (inout, output, reg, etc)
+      2. Data type (signed, unsigned)
+      3. Data width (int8, int16, etc)
+      4. Signal name (“a” for example)
+1. If no more elements, parse component instantiations (Try to have pseudo code by 10/26 - Spearheaded by all but John)
+   1. Identify if elements are valid (in d = a / b, does d exist?, etc)
+   2. Identify the operation
+   3. Identify the operands
+   4. Identify data width matching 
+      1. Truncate, pad
+   1. Identify paths (574a)
+      1. Critical path calculated as we go? 
+   1. Form the final string (the actual call in verilog: <SDIV>(a,b,d))
+1. Generate the .v (Needs previous steps completed and working)
+   1.
