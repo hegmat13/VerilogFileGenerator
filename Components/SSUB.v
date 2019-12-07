@@ -28,3 +28,4 @@ module SSUB  #( parameter DATAWIDTH = 64)(a, b, diff);
     always @(a,b) begin
         diff <= a - b;
     end
+endmodule
