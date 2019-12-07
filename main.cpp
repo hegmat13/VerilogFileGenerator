@@ -20,8 +20,8 @@ int main(int argc, char* argv[]) {
     //cout << "Argument 1 is : " << argv[1] << endl;
     //cout << "Argument 2 is : " << argv[2] << endl;
 	//
-	 argv[1] = const_cast<char*>("474a_circuit1.txt");//hard code files for debudding
-	 argv[2] = const_cast<char*>("circuit1result.v");//comment out to run from the terminal
+	 argv[1] = const_cast<char*>("474a_circuit4.txt");//hard code files for debudding
+	 argv[2] = const_cast<char*>("circuit4result.v");//comment out to run from the terminal
 
 	verilogSim sim;
 	sim.run(argv[1], argv[2]);
