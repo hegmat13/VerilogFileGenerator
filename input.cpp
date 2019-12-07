@@ -1023,19 +1023,19 @@ void verilogSim::WriteCommandsToFile() {
 			outputFile << "ADD #(" << bitWidth << ") Add" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == "+") && (sign == 1)) {
-			outputFile << "ADD #(" << bitWidth << ") SAdd" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
+			outputFile << "SADD #(" << bitWidth << ") SAdd" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == "-") && (sign == 0)) {
 			outputFile << "SUB #(" << bitWidth << ") Sub" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == "-") && (sign == 1)) {
-			outputFile << "SUB #(" << bitWidth << ") SSub" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
+			outputFile << "SSUB #(" << bitWidth << ") SSub" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == "*") && (sign == 0)) {
 			outputFile << "MUL #(" << (bitWidth * 2) << ") Mult" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == "*") && (sign == 1)) {
-			outputFile << "MUL #(" << (bitWidth * 2) << ") SMult" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
+			outputFile << "SMUL #(" << (bitWidth * 2) << ") SMult" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == ">") && (sign == 0)) {
 			outputFile << "COMP #(" << bitWidthc << ") Comp" << f << "(" << first << ", " << second << ", " << out << ", " <<
@@ -1050,15 +1050,15 @@ void verilogSim::WriteCommandsToFile() {
 				"0" << ", " << "0" << ", " << out << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == ">") && (sign == 1)) {
-			outputFile << "COMP #(" << bitWidthc << ") SComp" << f << "(" << first << ", " << second << ", " << out << ", " <<
+			outputFile << "SCOMP #(" << bitWidthc << ") SComp" << f << "(" << first << ", " << second << ", " << out << ", " <<
 				"0" << ", " << "0" << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == "<") && (sign == 1)) {
-			outputFile << "COMP #(" << bitWidthc << ") SComp" << f << "(" << first << ", " << second << ", " <<
+			outputFile << "SCOMP #(" << bitWidthc << ") SComp" << f << "(" << first << ", " << second << ", " <<
 				"0" << ", " << out << ", " << "0" << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == "==") && (sign == 1)) {
-			outputFile << "COMP #(" << bitWidthc << ") SComp" << f << "(" << first << ", " << second << ", " <<
+			outputFile << "SCOMP #(" << bitWidthc << ") SComp" << f << "(" << first << ", " << second << ", " <<
 				"0" << ", " << "0" << ", " << out << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == "?") && (sign == 0)) {
@@ -1067,7 +1067,7 @@ void verilogSim::WriteCommandsToFile() {
 		}
 		else if ((_equations.at(f).GetOperation() == "?") && (sign == 1)) {
 			//FIX ME
-			outputFile << "MUX2x1 #(" << bitWidth << ") SMux" << f << "(" << first << ", " << second << ", " << muxSel << ", " << out << ");" << endl;
+			outputFile << "SMUX2x1 #(" << bitWidth << ") SMux" << f << "(" << first << ", " << second << ", " << muxSel << ", " << out << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == ">>") && (sign == 0)) {
 			//FIX ME
@@ -1075,7 +1075,7 @@ void verilogSim::WriteCommandsToFile() {
 		}
 		else if ((_equations.at(f).GetOperation() == ">>") && (sign == 1)) {
 			//FIX ME
-			outputFile << "SHR #(" << bitWidth << ") SShr" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
+			outputFile << "SSHR #(" << bitWidth << ") SShr" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == "<<") && (sign == 0)) {
 			//FIX ME
@@ -1083,13 +1083,13 @@ void verilogSim::WriteCommandsToFile() {
 		}
 		else if ((_equations.at(f).GetOperation() == "<<") && (sign == 1)) {
 			//FIX ME
-			outputFile << "SHL #(" << bitWidth << ") SShl" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
+			outputFile << "SSHL #(" << bitWidth << ") SShl" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == "") && (sign == 0)) {
 			outputFile << "REG #(" << bitWidth << ") Reg" << f << "(" << first << ", " << "0, 0, " << out << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == "") && (sign == 1)) {
-			outputFile << "REG #(" << bitWidth << ") SReg" << f << "(" << first << ", " << "0, 0, " << out << ");" << endl;
+			outputFile << "SREG #(" << bitWidth << ") SReg" << f << "(" << first << ", " << "0, 0, " << out << ");" << endl;
 		}
 	}
 
