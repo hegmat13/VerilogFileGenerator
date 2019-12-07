@@ -542,6 +542,8 @@ void verilogSim::WriteCommandsToFile() {
 	//and somewhere we have to check the bitwidth of things in order to concatenate the smaller ones
 
 	//start writing the module
+	outputFile << "`timescale 1ns / 1ps" << endl;
+	outputFile << "//////////////////////////////////////////////////////////" << endl;
 	outputFile << "module circuitN(";
 
 	//loop to add in all inputs and outputs to the module declaration
