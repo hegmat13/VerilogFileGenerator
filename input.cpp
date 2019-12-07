@@ -668,11 +668,11 @@ void verilogSim::WriteCommandsToFile() {
 		Inputs initI;   //Empty Initialization Variables 
 		Wires initW;
 		Registers initR; 
-		auto firstVariableI = initI;          //initialize first input to first input in vector
-		auto firstVariableW = initW;			//intialize first wire variable to first wire in vector
-		auto firstVariableR = initR;		//Initialise first register variable to first register in vector 
-		auto secondVariableI = initI;		//initialize second variable input to first input in vector
-		auto secondVariableW = initW;		//initialize second variable wire to first wire in vector
+		auto firstVariableI = initI;    //initialize first input to first input in vector
+		auto firstVariableW = initW;	//intialize first wire variable to first wire in vector
+		auto firstVariableR = initR;	//Initialise first register variable to first register in vector 
+		auto secondVariableI = initI;	//initialize second variable input to first input in vector
+		auto secondVariableW = initW;	//initialize second variable wire to first wire in vector
 		auto secondVariableR = initR;   //initialize second variable register to first register in vector
 
 		auto op = _equations.at(f).GetOperation(); 
@@ -1063,11 +1063,11 @@ void verilogSim::WriteCommandsToFile() {
 		}
 		else if ((_equations.at(f).GetOperation() == "?") && (sign == 0)) {
 			//FIX ME
-			outputFile << "MUX2x1 #(" << bitWidth << ") Mux" << f << "(" << first << ", " << second << ", " << muxSel << ", " << out << ");" << endl;
+			outputFile << "MUX2x1 #(" << bitWidth << ") Mux" << f << "(" << second << ", " << muxSel << ", " << first << ", " << out << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == "?") && (sign == 1)) {
 			//FIX ME
-			outputFile << "SMUX2x1 #(" << bitWidth << ") SMux" << f << "(" << first << ", " << second << ", " << muxSel << ", " << out << ");" << endl;
+			outputFile << "SMUX2x1 #(" << bitWidth << ") SMux" << f << "(" << second << ", " << muxSel << ", " << first << ", " << out << ");" << endl;
 		}
 		else if ((_equations.at(f).GetOperation() == ">>") && (sign == 0)) {
 			//FIX ME
