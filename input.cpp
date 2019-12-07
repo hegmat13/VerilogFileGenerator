@@ -81,350 +81,354 @@ void verilogSim::ReadCommandsFromFile() {
 			len = type.length();
 
 			//INPUTS
-			if ((iow == "input") && ((iow != check1) || (type != check2))) {
-				Inputs temp;
-				temp.SetVariableI(*variable.c_str());
+			if (line != "") {
+				if ((iow == "input") && ((iow != check1) || (type != check2))) {
+					Inputs temp;
+					temp.SetVariableI(*variable.c_str());
 
-				if (firstLetter == 'I') {
+					if (firstLetter == 'I') {
 
-					temp.SetDataTypeI('I');
-					firstNum = type.at(3);
+						temp.SetDataTypeI('I');
+						firstNum = type.at(3);
 
-					if ((firstNum == '1') && (len == 4)) {
-						temp.SetDataWidthI(1);
-					}
-					else if (firstNum == '2') {
-						temp.SetDataWidthI(2);
-					}
-					else if (firstNum == '4') {
-						temp.SetDataWidthI(4);
-					}
-					else if (firstNum == '8') {
-						temp.SetDataWidthI(8);
-					}
-					else if ((firstNum == '1') && (len == 5)) {
-						temp.SetDataWidthI(16);
-					}
-					else if (firstNum == '3') {
-						temp.SetDataWidthI(32);
-					}
-					else if (firstNum == '6') {
-						temp.SetDataWidthI(64);
-					}
-					_inputs.push_back(temp);
-				}//end of signed int
+						if ((firstNum == '1') && (len == 4)) {
+							temp.SetDataWidthI(1);
+						}
+						else if (firstNum == '2') {
+							temp.SetDataWidthI(2);
+						}
+						else if (firstNum == '4') {
+							temp.SetDataWidthI(4);
+						}
+						else if (firstNum == '8') {
+							temp.SetDataWidthI(8);
+						}
+						else if ((firstNum == '1') && (len == 5)) {
+							temp.SetDataWidthI(16);
+						}
+						else if (firstNum == '3') {
+							temp.SetDataWidthI(32);
+						}
+						else if (firstNum == '6') {
+							temp.SetDataWidthI(64);
+						}
+						_inputs.push_back(temp);
+					}//end of signed int
 
-				else if (firstLetter == 'U') {
-					temp.SetDataTypeI('U');
-					firstNum = type.at(4);
-					if ((firstNum == '1') && (len == 5)) {
-						temp.SetDataWidthI(1);
-					}
-					else if (firstNum == '2') {
-						temp.SetDataWidthI(2);
-					}
-					else if (firstNum == '4') {
-						temp.SetDataWidthI(4);
-					}
-					else if (firstNum == '8') {
-						temp.SetDataWidthI(8);
-					}
-					else if ((firstNum == '1') && (len == 6)) {
-						temp.SetDataWidthI(16);
-					}
-					else if (firstNum == '3') {
-						temp.SetDataWidthI(32);
-					}
-					else if (firstNum == '6') {
-						temp.SetDataWidthI(64);
-					}
-					_inputs.push_back(temp);
-				}//end of unsigned int input
-				check1 = iow;
-				check2 = type;
+					else if (firstLetter == 'U') {
+						temp.SetDataTypeI('U');
+						firstNum = type.at(4);
+						if ((firstNum == '1') && (len == 5)) {
+							temp.SetDataWidthI(1);
+						}
+						else if (firstNum == '2') {
+							temp.SetDataWidthI(2);
+						}
+						else if (firstNum == '4') {
+							temp.SetDataWidthI(4);
+						}
+						else if (firstNum == '8') {
+							temp.SetDataWidthI(8);
+						}
+						else if ((firstNum == '1') && (len == 6)) {
+							temp.SetDataWidthI(16);
+						}
+						else if (firstNum == '3') {
+							temp.SetDataWidthI(32);
+						}
+						else if (firstNum == '6') {
+							temp.SetDataWidthI(64);
+						}
+						_inputs.push_back(temp);
+					}//end of unsigned int input
+					check1 = iow;
+					check2 = type;
 
-				while (extra != "") {
-					temp.SetVariableI(*extra.c_str());
-					_inputs.push_back(temp);
-					lineStream >> extra;
+					while (extra != "") {
+						temp.SetVariableI(*extra.c_str());
+						_inputs.push_back(temp);
+						lineStream >> extra;
 
-					cout << extra;
-
-
-					if (extra == temp.GetVariableI() || (extra.at(0) == '/')) {
-						break;
-					}
-				}
-			}// end of all inputs
+						cout << extra;
 
 
-
-
-
-			//OUTPUTS
-			if ((iow == "output") && ((iow != check3) || (type != check4))) {
-				Outputs temp;
-				temp.SetVariableO(variable);
-
-				if (firstLetter == 'I') {
-
-					temp.SetDataTypeO('I');
-					firstNum = type.at(3);
-
-					if ((firstNum == '1') && (len == 4)) {
-						temp.SetDataWidthO(1);
+						if (extra == temp.GetVariableI() || (extra.at(0) == '/')) {
+							break;
+						}
 					}
-					else if (firstNum == '2') {
-						temp.SetDataWidthO(2);
-					}
-					else if (firstNum == '4') {
-						temp.SetDataWidthO(4);
-					}
-					else if (firstNum == '8') {
-						temp.SetDataWidthO(8);
-					}
-					else if ((firstNum == '1') && (len == 5)) {
-						temp.SetDataWidthO(16);
-					}
-					else if (firstNum == '3') {
-						temp.SetDataWidthO(32);
-					}
-					else if (firstNum == '6') {
-						temp.SetDataWidthO(64);
-					}
-					_outputs.push_back(temp);
-				}//end of signed int
-
-				else if (firstLetter == 'U') {
-					temp.SetDataTypeO('U');
-					firstNum = type.at(4);
-					if ((firstNum == '1') && (len == 5)) {
-						temp.SetDataWidthO(1);
-					}
-					else if (firstNum == '2') {
-						temp.SetDataWidthO(2);
-					}
-					else if (firstNum == '4') {
-						temp.SetDataWidthO(4);
-					}
-					else if (firstNum == '8') {
-						temp.SetDataWidthO(8);
-					}
-					else if ((firstNum == '1') && (len == 6)) {
-						temp.SetDataWidthO(16);
-					}
-					else if (firstNum == '3') {
-						temp.SetDataWidthO(32);
-					}
-					else if (firstNum == '6') {
-						temp.SetDataWidthO(64);
-					}
-					_outputs.push_back(temp);
-				}//end of unsigned int input
-				check3 = iow;
-				check4 = type;
-
-				while (extra != "") {
-
-					/*added this to remove commas from wire Variable names*/
-					if (extra.at(extra.length() - 1) == ',') {
-						extra.erase(extra.length() - 1);
-					}
-
-					temp.SetVariableO(extra);
-					_outputs.push_back(temp);
-					lineStream >> extra;
-					if (extra == temp.GetVariableO() || (extra.at(0) == '/')) {
-						break;
-					}
-				}
-			}// end o
-
-			//REGISTERS
-			if ((iow == "register") && ((iow != check7) || (type != check8))) {
-				Registers temp;
-				temp.SetVariableR(variable);
-
-				if (firstLetter == 'I') {
-
-					temp.SetDataTypeR('I');
-					firstNum = type.at(3);
-
-					if ((firstNum == '1') && (len == 4)) {
-						temp.SetDataWidthR(1);
-					}
-					else if (firstNum == '2') {
-						temp.SetDataWidthR(2);
-					}
-					else if (firstNum == '4') {
-						temp.SetDataWidthR(4);
-					}
-					else if (firstNum == '8') {
-						temp.SetDataWidthR(8);
-					}
-					else if ((firstNum == '1') && (len == 5)) {
-						temp.SetDataWidthR(16);
-					}
-					else if (firstNum == '3') {
-						temp.SetDataWidthR(32);
-					}
-					else if (firstNum == '6') {
-						temp.SetDataWidthR(64);
-					}
-					_registers.push_back(temp);
-				}//end of signed int
-
-				else if (firstLetter == 'U') {
-					temp.SetDataTypeR('U');
-					firstNum = type.at(4);
-					if ((firstNum == '1') && (len == 5)) {
-						temp.SetDataWidthR(1);
-					}
-					else if (firstNum == '2') {
-						temp.SetDataWidthR(2);
-					}
-					else if (firstNum == '4') {
-						temp.SetDataWidthR(4);
-					}
-					else if (firstNum == '8') {
-						temp.SetDataWidthR(8);
-					}
-					else if ((firstNum == '1') && (len == 6)) {
-						temp.SetDataWidthR(16);
-					}
-					else if (firstNum == '3') {
-						temp.SetDataWidthR(32);
-					}
-					else if (firstNum == '6') {
-						temp.SetDataWidthR(64);
-					}
-					_registers.push_back(temp);
-				}//end of unsigned int input
-				check7 = iow;
-				check8 = type;
-				while (extra != "") {
-					temp.SetVariableR(extra);
-					_registers.push_back(temp);
-					lineStream >> extra;
-					if (extra == temp.GetVariableR()) {
-						break;
-					}
-				}
-			}//end registers
-
-			//WIRES
-			if ((iow == "wire") && ((iow != check5) || (type != check6))) {
-				Wires temp;
-				temp.SetVariableW(variable);
+				}// end of all inputs
 
 
 
-				if (firstLetter == 'I') {
-					//COMMENT
-					//cout << "entered data width loop for signed" << endl;
 
-					temp.SetDataTypeW('I');
-					firstNum = type.at(3);
 
-					if ((firstNum == '1') && (len == 4)) {
-						temp.SetDataWidthW(1);
-					}
-					else if (firstNum == '2') {
-						temp.SetDataWidthW(2);
-					}
-					else if (firstNum == '4') {
-						temp.SetDataWidthW(4);
-					}
-					else if (firstNum == '8') {
-						temp.SetDataWidthW(8);
-					}
-					else if ((firstNum == '1') && (len == 5)) {
-						temp.SetDataWidthW(16);
-					}
-					else if (firstNum == '3') {
-						temp.SetDataWidthW(32);
-					}
-					else if (firstNum == '6') {
-						temp.SetDataWidthW(64);
-					}
-					_wires.push_back(temp);
-				}//end of signed int
+				//OUTPUTS
+				if ((iow == "output") && ((iow != check3) || (type != check4))) {
+					Outputs temp;
+					temp.SetVariableO(variable);
 
-				else if (firstLetter == 'U') {
-					//COMMENT
-					//cout << "entered data width loop for UNsigned" << endl;
+					if (firstLetter == 'I') {
 
-					temp.SetDataTypeW('U');
-					firstNum = type.at(4);
-					if ((firstNum == '1') && (len == 5)) {
-						temp.SetDataWidthW(1);
-					}
-					else if (firstNum == '2') {
-						temp.SetDataWidthW(2);
-					}
-					else if (firstNum == '4') {
-						temp.SetDataWidthW(4);
-					}
-					else if (firstNum == '8') {
-						temp.SetDataWidthW(8);
-					}
-					else if ((firstNum == '1') && (len == 6)) {
-						temp.SetDataWidthW(16);
-					}
-					else if (firstNum == '3') {
-						temp.SetDataWidthW(32);
-					}
-					else if (firstNum == '6') {
-						temp.SetDataWidthW(64);
-					}
-					_wires.push_back(temp);
-				}//end of unsigned int input
-				//COMMENT ME OUT LATER
-				//cout << temp.GetVariableW() << " with bitwidth "<< temp.GetDataWidthW() << endl;
-				check3 = iow;
-				check4 = type;
+						temp.SetDataTypeO('I');
+						firstNum = type.at(3);
 
-				while (extra != "") {
-					temp.SetVariableW(extra);
-					_wires.push_back(temp);
-					lineStream >> extra;
+						if ((firstNum == '1') && (len == 4)) {
+							temp.SetDataWidthO(1);
+						}
+						else if (firstNum == '2') {
+							temp.SetDataWidthO(2);
+						}
+						else if (firstNum == '4') {
+							temp.SetDataWidthO(4);
+						}
+						else if (firstNum == '8') {
+							temp.SetDataWidthO(8);
+						}
+						else if ((firstNum == '1') && (len == 5)) {
+							temp.SetDataWidthO(16);
+						}
+						else if (firstNum == '3') {
+							temp.SetDataWidthO(32);
+						}
+						else if (firstNum == '6') {
+							temp.SetDataWidthO(64);
+						}
+						_outputs.push_back(temp);
+					}//end of signed int
+
+					else if (firstLetter == 'U') {
+						temp.SetDataTypeO('U');
+						firstNum = type.at(4);
+						if ((firstNum == '1') && (len == 5)) {
+							temp.SetDataWidthO(1);
+						}
+						else if (firstNum == '2') {
+							temp.SetDataWidthO(2);
+						}
+						else if (firstNum == '4') {
+							temp.SetDataWidthO(4);
+						}
+						else if (firstNum == '8') {
+							temp.SetDataWidthO(8);
+						}
+						else if ((firstNum == '1') && (len == 6)) {
+							temp.SetDataWidthO(16);
+						}
+						else if (firstNum == '3') {
+							temp.SetDataWidthO(32);
+						}
+						else if (firstNum == '6') {
+							temp.SetDataWidthO(64);
+						}
+						_outputs.push_back(temp);
+					}//end of unsigned int input
+					check3 = iow;
+					check4 = type;
+
+					while (extra != "") {
+
+						/*added this to remove commas from wire Variable names*/
+						if (extra.at(extra.length() - 1) == ',') {
+							extra.erase(extra.length() - 1);
+						}
+
+						temp.SetVariableO(extra);
+						_outputs.push_back(temp);
+						lineStream >> extra;
+						if (extra == temp.GetVariableO() || (extra.at(0) == '/')) {
+							break;
+						}
+					}
+				}// end o
+
+				//REGISTERS
+				if ((iow == "register") && ((iow != check7) || (type != check8))) {
+					Registers temp;
+					temp.SetVariableR(variable);
+
+					if (firstLetter == 'I') {
+
+						temp.SetDataTypeR('I');
+						firstNum = type.at(3);
+
+						if ((firstNum == '1') && (len == 4)) {
+							temp.SetDataWidthR(1);
+						}
+						else if (firstNum == '2') {
+							temp.SetDataWidthR(2);
+						}
+						else if (firstNum == '4') {
+							temp.SetDataWidthR(4);
+						}
+						else if (firstNum == '8') {
+							temp.SetDataWidthR(8);
+						}
+						else if ((firstNum == '1') && (len == 5)) {
+							temp.SetDataWidthR(16);
+						}
+						else if (firstNum == '3') {
+							temp.SetDataWidthR(32);
+						}
+						else if (firstNum == '6') {
+							temp.SetDataWidthR(64);
+						}
+						_registers.push_back(temp);
+					}//end of signed int
+
+					else if (firstLetter == 'U') {
+						temp.SetDataTypeR('U');
+						firstNum = type.at(4);
+						if ((firstNum == '1') && (len == 5)) {
+							temp.SetDataWidthR(1);
+						}
+						else if (firstNum == '2') {
+							temp.SetDataWidthR(2);
+						}
+						else if (firstNum == '4') {
+							temp.SetDataWidthR(4);
+						}
+						else if (firstNum == '8') {
+							temp.SetDataWidthR(8);
+						}
+						else if ((firstNum == '1') && (len == 6)) {
+							temp.SetDataWidthR(16);
+						}
+						else if (firstNum == '3') {
+							temp.SetDataWidthR(32);
+						}
+						else if (firstNum == '6') {
+							temp.SetDataWidthR(64);
+						}
+						_registers.push_back(temp);
+					}//end of unsigned int input
+					check7 = iow;
+					check8 = type;
+					while (extra != "") {
+						temp.SetVariableR(extra);
+						_registers.push_back(temp);
+						lineStream >> extra;
+						if (extra == temp.GetVariableR()) {
+							break;
+						}
+					}
+				}//end registers
+
+				//WIRES
+				if ((iow == "wire") && ((iow != check5) || (type != check6))) {
+					Wires temp;
+					temp.SetVariableW(variable);
+
+
+
+					if (firstLetter == 'I') {
+						//COMMENT
+						//cout << "entered data width loop for signed" << endl;
+
+						temp.SetDataTypeW('I');
+						firstNum = type.at(3);
+
+						if ((firstNum == '1') && (len == 4)) {
+							temp.SetDataWidthW(1);
+						}
+						else if (firstNum == '2') {
+							temp.SetDataWidthW(2);
+						}
+						else if (firstNum == '4') {
+							temp.SetDataWidthW(4);
+						}
+						else if (firstNum == '8') {
+							temp.SetDataWidthW(8);
+						}
+						else if ((firstNum == '1') && (len == 5)) {
+							temp.SetDataWidthW(16);
+						}
+						else if (firstNum == '3') {
+							temp.SetDataWidthW(32);
+						}
+						else if (firstNum == '6') {
+							temp.SetDataWidthW(64);
+						}
+						_wires.push_back(temp);
+					}//end of signed int
+
+					else if (firstLetter == 'U') {
+						//COMMENT
+						//cout << "entered data width loop for UNsigned" << endl;
+
+						temp.SetDataTypeW('U');
+						firstNum = type.at(4);
+						if ((firstNum == '1') && (len == 5)) {
+							temp.SetDataWidthW(1);
+						}
+						else if (firstNum == '2') {
+							temp.SetDataWidthW(2);
+						}
+						else if (firstNum == '4') {
+							temp.SetDataWidthW(4);
+						}
+						else if (firstNum == '8') {
+							temp.SetDataWidthW(8);
+						}
+						else if ((firstNum == '1') && (len == 6)) {
+							temp.SetDataWidthW(16);
+						}
+						else if (firstNum == '3') {
+							temp.SetDataWidthW(32);
+						}
+						else if (firstNum == '6') {
+							temp.SetDataWidthW(64);
+						}
+						_wires.push_back(temp);
+					}//end of unsigned int input
 					//COMMENT ME OUT LATER
 					//cout << temp.GetVariableW() << " with bitwidth "<< temp.GetDataWidthW() << endl;
+					check3 = iow;
+					check4 = type;
 
-					/*added this to remove commas from wire Variable names*/
-					if (extra.at(extra.length() - 1) == ',') {
-						extra.erase(extra.length() - 1);
+					while (extra != "") {
+						//COMMENT ME OUT LATER
+						//cout << temp.GetVariableW() << " with bitwidth "<< temp.GetDataWidthW() << endl;
+
+						/*added this to remove commas from wire Variable names*/
+						if (extra.at(extra.length() - 1) == ',') {
+							extra.erase(extra.length() - 1);
+						}
+
+						temp.SetVariableW(extra);
+						_wires.push_back(temp);
+						extra = "";
+						lineStream >> extra;
+
+						if (extra == "" || (extra.at(0) == '/')) {
+							break;
+						}
 					}
+				}// end wires
 
-					if (extra == temp.GetVariableW() || (extra.at(0) == '/')) {
-						break;
+
+				//EQUATIONS
+
+				//lineStream >> iow >> type >> variable >> extra;
+				if (type == "=") {
+					Equations temp;
+					temp.SetOut(iow);
+					temp.SetFirst(variable);
+					temp.SetOperation(extra);
+					if (extra == "?") {
+						lineStream >> mux2 >> colon >> sel;
+						temp.SetSecond(mux2);
+						temp.SetMuxSel(sel);
 					}
+					else {
+						lineStream >> extra;
+						temp.SetSecond(extra);
+						temp.SetMuxSel("0");
+					}
+					_equations.push_back(temp);
 				}
-			}// end wires
 
-
-			//EQUATIONS
-
-			//lineStream >> iow >> type >> variable >> extra;
-			if (type == "=") {
-				Equations temp;
-				temp.SetOut(iow);
-				temp.SetFirst(variable);
-				temp.SetOperation(extra);
-				if (extra == "?") {
-					lineStream >> mux2 >> colon >> sel;
-					temp.SetSecond(mux2);
-					temp.SetMuxSel(sel);
-				}
-				else {
-					lineStream >> extra;
-					temp.SetSecond(extra);
-					temp.SetMuxSel("0");
-				}
-				_equations.push_back(temp);
+				//end equations
 			}
-
-			//end equations
 		}
 	}
 	inputFileStream.close();
@@ -615,7 +619,7 @@ void verilogSim::WriteCommandsToFile() {
 	//Original Code from push 
 
 	//wires are also all on their own
-	for (auto w = 0; w < _wires.size() - 1; w++) {
+	for (auto w = 0; w < _wires.size(); w++) {
 		outputFile << "wire ";
 
 		//tack on signed if the type is signed
@@ -635,8 +639,8 @@ void verilogSim::WriteCommandsToFile() {
 	cout << "The _register.size() - 1 is: " << _registers.size() - 1 << endl;
 
 	//Registers are also all on their own
-	for (auto r = 0; r < _registers.size() - 0; r++) {
-		outputFile << "reg ";
+	for (auto r = 0; r < _registers.size(); r++) {
+		outputFile << "wire ";
 
 		//tack on signed if the type is signed
 		if (_registers.at(r).GetDataTypeR() == 'I') {     
