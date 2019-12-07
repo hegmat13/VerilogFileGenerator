@@ -317,7 +317,7 @@ void verilogSim::ReadCommandsFromFile() {
 				}//end registers
 
 				//WIRES
-				if ((iow == "wire") && ((iow != check5) || (type != check6))) {
+				if ((iow == "variable") && ((iow != check5) || (type != check6))) {
 					Wires temp;
 					temp.SetVariableW(variable);
 
