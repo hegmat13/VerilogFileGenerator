@@ -29,7 +29,7 @@ public:
     unsigned int GetDataWidthI() const;
     void SetDataWidthI(unsigned int dataWidthI);
     string GetVariableI() const;
-    void SetVariableI(char variableI);
+    void SetVariableI(string variableI);
 };
 
 #endif /* Inputs_hpp */

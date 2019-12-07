@@ -20,15 +20,19 @@ int main(int argc, char* argv[]) {
     //cout << "Argument 1 is : " << argv[1] << endl;
     //cout << "Argument 2 is : " << argv[2] << endl;
 	//
-	 argv[1] = const_cast<char*>("error1.txt");//hard code files for debudding
-	 argv[2] = const_cast<char*>("error1test.v");//comment out to run from the terminal
+	 argv[1] = const_cast<char*>("474a_circuit4.txt");//hard code files for debudding
+	 argv[2] = const_cast<char*>("circuit4result.v");//comment out to run from the terminal
 
 	verilogSim sim;
 	sim.run(argv[1], argv[2]);
 	sim.ReadCommandsFromFile();
 	int valid = sim.TestValid();
 	if (valid == 1) {
-		cout << "There is an invalid operator in your equations" << endl;
+		cout << "Error: There is an invalid operator in your equations" << endl;
+
+	}
+	else if (valid == 2) {
+		cout << "Error: One of the variables used in the equations is undeclared" << endl; 
 	}
 	else if (valid == 0) {
 		sim.WriteCommandsToFile();

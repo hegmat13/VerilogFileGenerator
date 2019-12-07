@@ -21,11 +21,11 @@ Inputs::Inputs(){
     
     SetDataTypeI('0');
     SetDataWidthI(0.0);
-    SetVariableI('0');
+    SetVariableI("0");
     
     _dataTypeI = '0';
     _dataWidthI = 0;
-    _variableI = '0';
+    _variableI = "0";
     
 }
 
@@ -51,6 +51,6 @@ string Inputs::GetVariableI() const {
     return variableI;
 }
 
-void Inputs::SetVariableI(char variableI) {
+void Inputs::SetVariableI(string variableI) {
     _variableI = variableI;
 }

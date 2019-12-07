@@ -84,7 +84,7 @@ void verilogSim::ReadCommandsFromFile() {
 			if (line != "") {
 				if ((iow == "input") && ((iow != check1) || (type != check2))) {
 					Inputs temp;
-					temp.SetVariableI(*variable.c_str());
+					temp.SetVariableI(variable);
 
 					if (firstLetter == 'I') {
 
@@ -145,12 +145,15 @@ void verilogSim::ReadCommandsFromFile() {
 					check2 = type;
 
 					while (extra != "") {
-						temp.SetVariableI(*extra.c_str());
+						temp.SetVariableI(extra);
 						_inputs.push_back(temp);
 						lineStream >> extra;
 
 						cout << extra;
 
+						if (extra.at(extra.length() - 1) == ',') {
+							extra.erase(extra.length() - 1);
+						}
 
 						if (extra == temp.GetVariableI() || (extra.at(0) == '/')) {
 							break;
@@ -437,11 +440,17 @@ void verilogSim::ReadCommandsFromFile() {
 
 unsigned int verilogSim::TestValid() {
     
-    unsigned long int lenI, lenO, lenW, lenE, lenR;
+    unsigned long int lenI, lenO, lenW, lenE, lenR, lenDecVars, lenEqVars;
     unsigned int i = 0, j = 0;
+	bool declared = false;
     
-    Equations temp;
+    Equations temp; 
     lenE = _equations.size();
+	//lenI = _inputs.size(); 
+	//lenO = _outputs.size(); 
+	//lenW = _wires.size(); 
+	//lenR = _registers.size(); 
+
     while (i < lenE) {
         temp = _equations.at(i);
         string test = temp.GetOperation();
@@ -457,33 +466,67 @@ unsigned int verilogSim::TestValid() {
         }
         i++;
     }
+
+	/*for (i = 0; i < lenE; i++) {
+		for(j = 0; j < )
+	 }*/
     
 //     i = 0;
 //     int checkI = 0, checkO = 0, checkW = 0, checkR = 0;
     
-//     lenI = _inputs.size();
-//     lenO = _outputs.size();
-//     lenW = _wires.size();
-//     lenE = _equations.size();
-//     lenR = _registers.size();
+     lenI = _inputs.size();
+     lenO = _outputs.size();
+     lenW = _wires.size();
+     lenE = _equations.size();
+     lenR = _registers.size();
     
     
-//     std::vector<string> eqVars, allVars;
+	std::vector<string> eqVars;    //All variables that appear in the equations 
+	std::vector<string> decVars;   //All variables that are declared at the top 
 
-//     for(i = 0; i < lenI; i++) {
-//         allVars.push_back(_inputs.at(i).GetVariableI());
-//     }
-//     for(i = 0; i < lenO; i++) {
-//         allVars.push_back(_outputs.at(i).GetVariableO());
-//     }
-//     for(i = 0; i < lenW; i++) {
-//         allVars.push_back(_wires.at(i).GetVariableW());
-//     }
-//     for(i = 0; i < lenR; i++) {
-//         allVars.push_back(_registers.at(i).GetVariableR());
-//     }
-//     eqVars.push_back(_equations.at(0).GetOut());
-//     unsigned int len = eqVars.size();
+     for(i = 0; i < lenI; i++) {
+         decVars.push_back(_inputs.at(i).GetVariableI());
+     }
+     for(i = 0; i < lenO; i++) {
+         decVars.push_back(_outputs.at(i).GetVariableO());
+     }
+     for(i = 0; i < lenW; i++) {
+         decVars.push_back(_wires.at(i).GetVariableW());
+     }
+     for(i = 0; i < lenR; i++) {
+         decVars.push_back(_registers.at(i).GetVariableR());
+     }
+
+	 for (i = 0; i < lenE; i++) {
+		 eqVars.push_back(_equations.at(i).GetFirst()); 
+		 eqVars.push_back(_equations.at(i).GetSecond());
+		 eqVars.push_back(_equations.at(i).GetMuxSel());
+		 eqVars.push_back(_equations.at(i).GetOut());
+	 }
+
+	 lenDecVars = decVars.size(); 
+	 lenEqVars = eqVars.size(); 
+
+	 for (i = 0; i < lenEqVars; i++) { //Run through all variables and zeros that show up in the equations 
+		// auto tempS = eqVars.at(i); 
+		 if ((eqVars.at(i) == "0") || (eqVars.at(i) == "")) { //If variable in the equation is a 0 mark it as declared to prevent it from breaking 
+			 declared = true; 
+		 }
+		 else {
+			 for (j = 0; j < lenDecVars; j++) {  //Check if variable in equation matches one of the declared variables 
+				 if (eqVars.at(i) == decVars.at(j)) { //If it matches one of the declared variables set declared to true
+					 declared = true;
+				 }
+			 }
+		 }
+		 if (declared != true) { //If the variable is never found in the declared variables then return error code 2
+			 return(2); 
+		 }
+		 declared = false; 
+	 }
+
+//     eqvars.push_back(_equations.at(0).getout());
+  //   unsigned int len = eqVars.size();
 //     //eqVars.push_back(_equations.at(i).GetOut());
 //     //eqVars.push_back(_equations.at(i).GetFirst());
 //     //eqVars.push_back(_equations.at(i).GetSecond());
