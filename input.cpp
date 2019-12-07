@@ -577,7 +577,7 @@ void verilogSim::WriteCommandsToFile() {
 
 	//outputs are also all on their own
 	for (auto& _output : _outputs) {
-		outputFile << "output reg ";
+		outputFile << "output ";
 
 		//tack on signed if the type is signed
 		if (_output.GetDataTypeO() == 'I') {
