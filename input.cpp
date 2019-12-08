@@ -675,10 +675,6 @@ void verilogSim::TimeSlotScheduling() {
 			}
 		}
 	}
-
-
-
-
 	}
 
 void verilogSim::WriteCommandsToFile() {
