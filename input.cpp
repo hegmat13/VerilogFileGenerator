@@ -591,18 +591,22 @@ void verilogSim::WriteCommandsToFile() {
 	//start writing the module
 	outputFile << "`timescale 1ns / 1ps" << endl;
 	outputFile << "//////////////////////////////////////////////////////////" << endl;
-	outputFile << "module circuitN(";
+	outputFile << "module HLSM(Clk, Rst, Start, ";
 
 	//loop to add in all inputs and outputs to the module declaration
 	//this is all the first line of the .v file
 	for (auto a = 0; a < _inputs.size(); a++) {
 		outputFile << _inputs.at(a).GetVariableI() << ", ";
 	}
+	outputFile << "Done, ";
 	for (auto b = 0; b < _outputs.size() - 1; b++) {
 		outputFile << _outputs.at(b).GetVariableO() << ", ";
 	}
 	outputFile << _outputs.back().GetVariableO() << ");" << endl;
 
+	//make sure the necessary HLSM inputs exist
+	outputFile << "input Clk, Rst, Start;" << endl;
+	
 	//now we begin adding the inputs, they're all individual for now
 	//if you figure out how to group them all by sizes props
 	for (auto& _input : _inputs) {
@@ -621,6 +625,9 @@ void verilogSim::WriteCommandsToFile() {
 			outputFile << "[" << std::to_string(_input.GetDataWidthI() - 1) << ":0] " << _input.GetVariableI() << ";" << endl;
 		}
 	}
+	
+	//make sure necessary HLSM output exists
+	outputFile << "output reg Done;" << endl;
 
 	//outputs are also all on their own
 	for (auto& _output : _outputs) {
@@ -639,27 +646,6 @@ void verilogSim::WriteCommandsToFile() {
 			outputFile << "[" << std::to_string(_output.GetDataWidthO() - 1) << ":0] " << _output.GetVariableO() << ";" << endl;
 		}
 	}
-
-	/*
-	for (auto & _wire : _wires) {
-		outputFile << "wire ";
-
-		//tack on signed if the type is signed
-		if (_wire.GetDataTypeW() == 'I') {     //Segmentation Fault
-			outputFile << "signed ";
-		}
-
-		//add in the bitwidth part
-		if (_wire.GetDataWidthW() == 1) {
-			outputFile << _wire.GetVariableW() << ";" << endl;
-		}
-		else {
-			outputFile << "[" << std::to_string(_wire.GetDataWidthW() - 1) << ":0] " << _wire.GetVariableW() << ";" << endl;
-		}
-	} */
-
-
-	//Original Code from push 
 
 	//wires are also all on their own
 	for (auto w = 0; w < _wires.size(); w++) {
