@@ -52,3 +52,30 @@ string Wires::GetVariableW() const {
 void Wires::SetVariableW(string variableW) {
     _variableW = variableW;
 }
+
+unsigned int Wires::GetTimeSlotASAPW() const {
+	int timeSlotASAPW = _timeSlotASAPW;
+	return timeSlotASAPW;
+}
+
+void Wires::SetTimeSlotASAPW(unsigned int timeSlotASAPW) {
+	_timeSlotASAPW = timeSlotASAPW;
+}
+
+unsigned int Wires::GetTimeSlotALAPW() const {
+	int timeSlotALAPW = _timeSlotALAPW;
+	return timeSlotALAPW;
+}
+
+void Wires::SetTimeSlotALAPW(unsigned int timeSlotALAPW) {
+	_timeSlotALAPW = timeSlotALAPW;
+}
+
+unsigned int Wires::GetTimeSlotListRW() const {
+	int timeSlotListRW = _timeSlotListRW;
+	return timeSlotListRW;
+}
+
+void Wires::SetTimeSlotListRW(unsigned int timeSlotListRW) {
+	_timeSlotListRW = timeSlotListRW;
+}

@@ -54,3 +54,31 @@ string Inputs::GetVariableI() const {
 void Inputs::SetVariableI(string variableI) {
     _variableI = variableI;
 }
+
+unsigned int Inputs::GetTimeSlotASAPI() const {
+	int timeSlotASAPI = _timeSlotASAPI;
+	return timeSlotASAPI;
+}
+
+void Inputs::SetTimeSlotASAPI(unsigned int timeSlotASAPI) {
+	_timeSlotASAPI = timeSlotASAPI;
+}
+
+unsigned int Inputs::GetTimeSlotALAPI() const {
+	int timeSlotALAPI = _timeSlotALAPI;
+	return timeSlotALAPI;
+}
+
+void Inputs::SetTimeSlotALAPI(unsigned int timeSlotALAPI) {
+	_timeSlotALAPI = timeSlotALAPI;
+}
+
+unsigned int Inputs::GetTimeSlotListRI() const {
+	int timeSlotListRI = _timeSlotListRI;
+	return timeSlotListRI;
+}
+
+void Inputs::SetTimeSlotListRI(unsigned int timeSlotListRI) {
+	_timeSlotListRI = timeSlotListRI;
+}
+

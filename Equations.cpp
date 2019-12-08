@@ -76,4 +76,30 @@ void Equations::SetMuxSel(string muxSel) {
     _muxSel = muxSel;
 }
 
+unsigned int Equations::GetTimeSlotASAPE() const {
+	int timeSlotASAPE = _timeSlotASAPE;
+	return timeSlotASAPE;
+}
+
+void Equations::SetTimeSlotASAPE(unsigned int timeSlotASAPE) {
+	_timeSlotASAPE = timeSlotASAPE;
+}
+
+unsigned int Equations::GetTimeSlotALAPE() const {
+	int timeSlotALAPE = _timeSlotALAPE;
+	return timeSlotALAPE;
+}
+
+void Equations::SetTimeSlotALAPE(unsigned int timeSlotALAPE) {
+	_timeSlotALAPE = timeSlotALAPE;
+}
+
+unsigned int Equations::GetTimeSlotListRE() const {
+	int timeSlotListRE = _timeSlotListRE;
+	return timeSlotListRE;
+}
+
+void Equations::SetTimeSlotListRE(unsigned int timeSlotListRE) {
+	_timeSlotListRE = timeSlotListRE;
+}
 

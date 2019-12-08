@@ -21,10 +21,11 @@ int main(int argc, char* argv[]) {
     //cout << "Argument 2 is : " << argv[2] << endl;
 	//
 	 argv[1] = const_cast<char*>("474a_circuit4.txt");//hard code files for debudding
-	 argv[2] = const_cast<char*>("circuit4result.v");//comment out to run from the terminal
+	 argv[3] = const_cast<char*>("circuit4result.v");//comment out to run from the terminal
+	 int latency = (int)argv[2]; 
 
 	verilogSim sim;
-	sim.run(argv[1], argv[2]);
+	sim.run(argv[1], latency, argv[3]);
 	sim.ReadCommandsFromFile();
 	int valid = sim.TestValid();
 	if (valid == 1) {

@@ -21,6 +21,9 @@ private:
     string _first;
     string _second;
     string _muxSel;
+	unsigned int _timeSlotASAPE;
+	unsigned int _timeSlotALAPE;
+	unsigned int _timeSlotListRE;
 
 public:
     Equations(string out, string operation, string first, string second, string muxSel);
@@ -36,6 +39,12 @@ public:
     void SetSecond(string second);
     string GetMuxSel() const;
     void SetMuxSel(string muxSel);
+	unsigned int GetTimeSlotASAPE() const;
+	void SetTimeSlotASAPE(unsigned int timeSlotASAPE);
+	unsigned int GetTimeSlotALAPE() const;
+	void SetTimeSlotALAPE(unsigned int timeSlotALAPE);
+	unsigned int GetTimeSlotListRE() const;
+	void SetTimeSlotListRE(unsigned int timeSlotListRE);
 };
 
 #endif /* Equations_hpp */

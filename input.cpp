@@ -17,9 +17,10 @@
 
 using namespace std;
 
-void verilogSim::run(char* inputFileName, char* outputFileName) {
+void verilogSim::run(char* inputFileName, int latency, char* outputFileName) {
 	_inputFileName = inputFileName;
 	_outputFileName = outputFileName;
+	_latency = latency; 
 }
 
 void verilogSim::ReadCommandsFromFile() {
@@ -85,6 +86,8 @@ void verilogSim::ReadCommandsFromFile() {
 				if ((iow == "input") && ((iow != check1) || (type != check2))) {
 					Inputs temp;
 					temp.SetVariableI(variable);
+					temp.SetTimeSlotASAPI(0); 
+					temp.SetTimeSlotALAPI(_latency);
 
 					if (firstLetter == 'I') {
 
@@ -169,6 +172,8 @@ void verilogSim::ReadCommandsFromFile() {
 				if ((iow == "output") && ((iow != check3) || (type != check4))) {
 					Outputs temp;
 					temp.SetVariableO(variable);
+					temp.SetTimeSlotASAPO(0);
+					temp.SetTimeSlotALAPO(_latency);
 
 					if (firstLetter == 'I') {
 
@@ -245,6 +250,7 @@ void verilogSim::ReadCommandsFromFile() {
 				}// end o
 
 				//REGISTERS
+				/*
 				if ((iow == "register") && ((iow != check7) || (type != check8))) {
 					Registers temp;
 					temp.SetVariableR(variable);
@@ -314,12 +320,14 @@ void verilogSim::ReadCommandsFromFile() {
 							break;
 						}
 					}
-				}//end registers
+				}//end registers */
 
 				//WIRES
 				if ((iow == "variable") && ((iow != check5) || (type != check6))) {
 					Wires temp;
 					temp.SetVariableW(variable);
+					temp.SetTimeSlotASAPW(0);
+					temp.SetTimeSlotALAPW(_latency);
 
 
 
@@ -417,6 +425,9 @@ void verilogSim::ReadCommandsFromFile() {
 					temp.SetOut(iow);
 					temp.SetFirst(variable);
 					temp.SetOperation(extra);
+					temp.SetTimeSlotASAPE(0);
+					temp.SetTimeSlotALAPE(_latency);
+
 					if (extra == "?") {
 						lineStream >> mux2 >> colon >> sel;
 						temp.SetSecond(mux2);
@@ -430,6 +441,14 @@ void verilogSim::ReadCommandsFromFile() {
 					_equations.push_back(temp);
 				}
 
+				//lineStream >> iow >> type >> variable >> extra;
+				//// if else
+				if ((iow == "if") || (iow == "else")) {
+					Equations temp;
+					temp.SetOperation(iow);
+					temp.SetOut(variable); 
+					_equations.push_back(temp); 
+				}
 				//end equations
 			}
 		}
@@ -574,6 +593,93 @@ unsigned int verilogSim::TestValid() {
 
     return 0;
 }
+
+void verilogSim::TimeSlotScheduling() {
+
+	unsigned int firstTimeSlotASAP = 0; 
+	unsigned int secondTimeSlotASAP = 0; 
+	unsigned int equationTimeSlotALAP = 0; 
+	int i, j; 
+	
+	int lenI = _inputs.size();
+	int lenO = _outputs.size();
+	int lenW = _wires.size();
+	int lenE = _equations.size();
+
+	//ASAP time slot scheduling 
+	for (j = 0; j < lenE; j++) {
+		for (i = 0; i < lenI; i++) {
+			//Scheduling for Inputs
+			if (_inputs.at(i).GetVariableI() == _equations.at(j).GetFirst()) {
+				firstTimeSlotASAP = _inputs.at(i).GetTimeSlotASAPI();
+			}
+			else if (_inputs.at(i).GetVariableI() == _equations.at(j).GetSecond()) {
+				secondTimeSlotASAP = _inputs.at(i).GetTimeSlotASAPI();
+			}
+		}
+		for (i = 0; i < lenO; i++) {
+			//Scheduling for Outputs
+			if (_outputs.at(i).GetVariableO() == _equations.at(j).GetFirst()) {
+				firstTimeSlotASAP = _outputs.at(i).GetTimeSlotASAPO();
+			}
+			else if (_inputs.at(i).GetVariableI() == _equations.at(j).GetSecond()) {
+				secondTimeSlotASAP = _outputs.at(i).GetTimeSlotASAPO();
+			}
+		}
+		for (i = 0; i < lenW; i++) {
+			//Scheduling for Variables
+			if (_wires.at(i).GetVariableW() == _equations.at(j).GetFirst()) {
+				firstTimeSlotASAP = _wires.at(i).GetTimeSlotASAPW();
+			}
+			else if (_wires.at(i).GetVariableW() == _equations.at(j).GetSecond()) {
+				secondTimeSlotASAP = _wires.at(i).GetTimeSlotASAPW();
+			}
+		}
+		   
+			if (firstTimeSlotASAP >= secondTimeSlotASAP) {
+				_equations.at(j).SetTimeSlotASAPE(firstTimeSlotASAP + 1); 
+			}
+			else {
+				_equations.at(j).SetTimeSlotASAPE(secondTimeSlotASAP + 1);
+			}
+		}
+
+	//ALAP time slot scheduling 
+	for (j = lenE; j > 0; j--) {
+		equationTimeSlotALAP = _equations.at(j).GetTimeSlotALAPE(); 
+		for (i = 0; i < lenI; i++) {
+			//Scheduling for Inputs
+			if (_inputs.at(i).GetVariableI() == _equations.at(j).GetFirst()) {
+				_inputs.at(i).SetTimeSlotALAPI(equationTimeSlotALAP - 1); 
+			}
+			else if (_inputs.at(i).GetVariableI() == _equations.at(j).GetSecond()) {
+				_inputs.at(i).SetTimeSlotALAPI(equationTimeSlotALAP - 1);
+			}
+		}
+		for (i = 0; i < lenO; i++) {
+			//Scheduling for Outputs
+			if (_outputs.at(i).GetVariableO() == _equations.at(j).GetFirst()) {
+				_outputs.at(i).SetTimeSlotALAPO(equationTimeSlotALAP - 1);
+			}
+			else if (_inputs.at(i).GetVariableI() == _equations.at(j).GetSecond()) {
+				_outputs.at(i).SetTimeSlotALAPO(equationTimeSlotALAP - 1);
+			}
+		}
+		for (i = 0; i < lenW; i++) {
+			//Scheduling for Variables
+			if (_wires.at(i).GetVariableW() == _equations.at(j).GetFirst()) {
+				_wires.at(i).SetTimeSlotALAPW(equationTimeSlotALAP - 1);
+			}
+			else if (_wires.at(i).GetVariableW() == _equations.at(j).GetSecond()) {
+				_wires.at(i).SetTimeSlotALAPW(equationTimeSlotALAP - 1);
+			}
+		}
+	}
+
+
+
+
+	}
 
 void verilogSim::WriteCommandsToFile() {
 
@@ -1060,6 +1166,17 @@ void verilogSim::WriteCommandsToFile() {
 		if ((_equations.at(f).GetOperation() == "+") && (sign == 0)) {
 			outputFile << "ADD #(" << bitWidth << ") Add" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
 		}
+		//////////////// if else 
+		else if (_equations.at(f).GetOut() == "}") {
+			outputFile << "end" << endl;
+		}
+		else if (_equations.at(f).GetOperation() == "if") {
+			outputFile << "if (" << _equations.at(f).GetOut() << ")" << endl << "begin" << endl;
+		}
+		else if (_equations.at(f).GetOperation() == "else") {
+			outputFile << "else (" << _equations.at(f).GetOut() << ")" << endl << "begin" << endl;
+		}
+		//////////////// if else
 		else if ((_equations.at(f).GetOperation() == "+") && (sign == 1)) {
 			outputFile << "SADD #(" << bitWidth << ") SAdd" << f << "(" << first << ", " << second << ", " << out << ");" << endl;
 		}

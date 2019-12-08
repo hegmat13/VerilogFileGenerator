@@ -19,6 +19,10 @@ private:
     char _dataTypeW;
     unsigned int _dataWidthW;
     string _variableW;
+	unsigned int _timeSlotASAPW;
+	unsigned int _timeSlotALAPW;
+	unsigned int _timeSlotListRW;
+
 public:
     Wires(char dataTypeW, unsigned int dataWidthW, string variableW);
     Wires();
@@ -29,6 +33,13 @@ public:
     void SetDataWidthW(unsigned int dataWidthW);
     string GetVariableW() const;
     void SetVariableW(string variableW);
+	unsigned int GetTimeSlotASAPW() const;
+	void SetTimeSlotASAPW(unsigned int timeSlotASAPW);
+	unsigned int GetTimeSlotALAPW() const;
+	void SetTimeSlotALAPW(unsigned int timeSlotALAPW);
+	unsigned int GetTimeSlotListRW() const;
+	void SetTimeSlotListRW(unsigned int timeSlotListRW);
+
 };
 
 #endif /* Wires_hpp */
