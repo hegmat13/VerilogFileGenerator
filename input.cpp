@@ -603,8 +603,10 @@ void verilogSim::TimeSlotScheduling() {
 	unsigned int firstTimeSlotASAP = 0; 
 	unsigned int secondTimeSlotASAP = 0; 
 	unsigned int equationTimeSlotALAP = 0; 
-	int i, j; 
-	
+	int i, j, k1,k2;
+	int k;
+	string flag_variable1, flag_variable_2;
+
 	int lenI = _inputs.size();
 	int lenO = _outputs.size();
 	int lenW = _wires.size();
@@ -612,70 +614,120 @@ void verilogSim::TimeSlotScheduling() {
 
 	//ASAP time slot scheduling 
 	for (j = 0; j < lenE; j++) {
+		k1 = 0;
+		k2 = 0;
 		for (i = 0; i < lenI; i++) {
 			//Scheduling for Inputs
 			if (_inputs.at(i).GetVariableI() == _equations.at(j).GetFirst()) {
 				firstTimeSlotASAP = _inputs.at(i).GetTimeSlotASAPI();
+				k1 = j;
 			}
 			else if (_inputs.at(i).GetVariableI() == _equations.at(j).GetSecond()) {
 				secondTimeSlotASAP = _inputs.at(i).GetTimeSlotASAPI();
+				k2 = j;
 			}
 		}
 		for (i = 0; i < lenO; i++) {
 			//Scheduling for Outputs
 			if (_outputs.at(i).GetVariableO() == _equations.at(j).GetFirst()) {
 				firstTimeSlotASAP = _outputs.at(i).GetTimeSlotASAPO();
+				k1 = j;
 			}
 			else if (_inputs.at(i).GetVariableI() == _equations.at(j).GetSecond()) {
 				secondTimeSlotASAP = _outputs.at(i).GetTimeSlotASAPO();
+				k2 = j;
 			}
 		}
 		for (i = 0; i < lenW; i++) {
 			//Scheduling for Variables
 			if (_wires.at(i).GetVariableW() == _equations.at(j).GetFirst()) {
 				firstTimeSlotASAP = _wires.at(i).GetTimeSlotASAPW();
+				k1 = j;
 			}
 			else if (_wires.at(i).GetVariableW() == _equations.at(j).GetSecond()) {
 				secondTimeSlotASAP = _wires.at(i).GetTimeSlotASAPW();
+				k2 = j;
 			}
+			
 		}
-		   
 			if (firstTimeSlotASAP >= secondTimeSlotASAP) {
-				_equations.at(j).SetTimeSlotASAPE(firstTimeSlotASAP + 1); 
+				_equations.at(j).SetTimeSlotASAPE(firstTimeSlotASAP + 1);
 			}
 			else {
 				_equations.at(j).SetTimeSlotASAPE(secondTimeSlotASAP + 1);
 			}
-		}
+			//finding and changing asap time of variables
+			for (i = 0; i < lenI; i++) {
+				if ((_inputs.at(i).GetVariableI() == _equations.at(j).GetOut()) || (_inputs.at(i).GetVariableI() == _equations.at(j).GetOut())) {
+					if (_equations.at(j).GetOperation() == "*") {
+						_inputs.at(i).SetTimeSlotASAPI(_equations.at(j).GetTimeSlotASAPE() + 1);
+					}
+					else {
+						_inputs.at(i).SetTimeSlotASAPI(_equations.at(j).GetTimeSlotASAPE());
+					}
+				}
+			}
+			for (i = 0; i < lenO; i++) {
+				if ((_outputs.at(i).GetVariableO() == _equations.at(j).GetOut()) || (_outputs.at(i).GetVariableO() == _equations.at(j).GetOut())) {
+					if (_equations.at(j).GetOperation() == "*") {
+						_outputs.at(i).SetTimeSlotASAPO(_equations.at(j).GetTimeSlotASAPE() + 1);
+					}
+					else {
+						_outputs.at(i).SetTimeSlotASAPO(_equations.at(j).GetTimeSlotASAPE());
+					}
+				}
+			}
+			for (i = 0; i < lenW; i++) {
+				if ((_wires.at(i).GetVariableW() == _equations.at(j).GetOut()) || (_wires.at(i).GetVariableW() == _equations.at(j).GetOut())) {
+					if (_equations.at(j).GetOperation() == "*") {
+						_wires.at(i).SetTimeSlotASAPW(_equations.at(j).GetTimeSlotASAPE() + 1);
+					}
+					else {
+						_wires.at(i).SetTimeSlotASAPW(_equations.at(j).GetTimeSlotASAPE());
+					}
+				}
+			}
+	}
 
 	//ALAP time slot scheduling 
-	for (j = lenE; j > 0; j--) {
-		equationTimeSlotALAP = _equations.at(j).GetTimeSlotALAPE(); 
-		for (i = 0; i < lenI; i++) {
-			//Scheduling for Inputs
-			if (_inputs.at(i).GetVariableI() == _equations.at(j).GetFirst()) {
-				_inputs.at(i).SetTimeSlotALAPI(equationTimeSlotALAP - 1); 
+	
+	for (j = lenE - 1; j >= 0; j--) {
+		equationTimeSlotALAP = _equations.at(j).GetTimeSlotALAPE() + 1;
+		if (j < lenE - 1) {
+			for (k = 0; k < lenE; k++) {
+				if ((_equations.at(k).GetOut() == _equations.at(j + 1).GetFirst()) || (_equations.at(k).GetOut() == _equations.at(j + 1).GetSecond())) {
+					equationTimeSlotALAP = _equations.at(j + 1).GetTimeSlotALAPE();
+					break;
+				}
+				
 			}
-			else if (_inputs.at(i).GetVariableI() == _equations.at(j).GetSecond()) {
-				_inputs.at(i).SetTimeSlotALAPI(equationTimeSlotALAP - 1);
+		}
+
+		if (_equations.at(j).GetOperation() == "*") {
+			equationTimeSlotALAP = equationTimeSlotALAP - 2;
+		}
+		else {
+			equationTimeSlotALAP = equationTimeSlotALAP - 1;
+		}
+		for (i = 0; i < lenI; i++) {
+			//Scheduling for Inputs ALAP
+			if ((_inputs.at(i).GetVariableI() == _equations.at(j).GetFirst()) || (_inputs.at(i).GetVariableI() == _equations.at(j).GetSecond())) {
+				_inputs.at(i).SetTimeSlotALAPI(equationTimeSlotALAP);
+				_equations.at(j).SetTimeSlotALAPE(_inputs.at(i).GetTimeSlotALAPI());
 			}
 		}
 		for (i = 0; i < lenO; i++) {
-			//Scheduling for Outputs
-			if (_outputs.at(i).GetVariableO() == _equations.at(j).GetFirst()) {
-				_outputs.at(i).SetTimeSlotALAPO(equationTimeSlotALAP - 1);
-			}
-			else if (_inputs.at(i).GetVariableI() == _equations.at(j).GetSecond()) {
-				_outputs.at(i).SetTimeSlotALAPO(equationTimeSlotALAP - 1);
+			//Scheduling for Outputs ALAP
+			if ((_outputs.at(i).GetVariableO() == _equations.at(j).GetFirst()) || (_outputs.at(i).GetVariableO() == _equations.at(j).GetSecond())) {
+				_outputs.at(i).SetTimeSlotALAPO(equationTimeSlotALAP);
+				_equations.at(j).SetTimeSlotALAPE(_outputs.at(i).GetTimeSlotALAPO());
 			}
 		}
 		for (i = 0; i < lenW; i++) {
-			//Scheduling for Variables
-			if (_wires.at(i).GetVariableW() == _equations.at(j).GetFirst()) {
-				_wires.at(i).SetTimeSlotALAPW(equationTimeSlotALAP - 1);
-			}
-			else if (_wires.at(i).GetVariableW() == _equations.at(j).GetSecond()) {
-				_wires.at(i).SetTimeSlotALAPW(equationTimeSlotALAP - 1);
+			//Scheduling for Variables ALAP
+			if ((_wires.at(i).GetVariableW() == _equations.at(j).GetFirst()) || (_wires.at(i).GetVariableW() == _equations.at(j).GetSecond())) {
+				_wires.at(i).SetTimeSlotALAPW(equationTimeSlotALAP);
+				_equations.at(j).SetTimeSlotALAPE(_wires.at(i).GetTimeSlotALAPW());
 			}
 		}
 	}
