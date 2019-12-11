@@ -20,8 +20,14 @@ int main(int argc, char* argv[]) {
     cout << "Argument 1 is : " << argv[1] << endl;
     cout << "Argument 2 is : " << argv[2] << endl;
 	//
+	/*
+	char* inputfile; 
+	strcpy(inputfile, "474a_circuit1.txt"); 
+	char* outputfile;
+	strcpy(outputfile, "output.v"); */
+
 	// argv[1] = const_cast<char*>("474a_circuit4.txt");//hard code files for debudding
-	// argv[3] = const_cast<char*>("circuit4result.v");//comment out to run from the terminal
+	// argv[2] = const_cast<char*>("output.v");//comment out to run from the terminal
 	// int latency = (int)argv[2]; 
 
 	verilogSim sim;

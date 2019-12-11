@@ -15,7 +15,7 @@
 #include <string>
 #include <algorithm>
 #include <ostream> 
-#include <istream>
+#include <fstream>
 
 using namespace std; 
  
@@ -27,15 +27,16 @@ void verilogSim::run(char* inputFileName, char* outputFileName) {
 
 void verilogSim::ReadCommandsFromFile() {
 
-	stringstream inputFile;
+	ostringstream inputFile;
 	inputFile << _inputFileName;
+	std::string inputName = inputFile.str(); 
 
-	ifstream inputFileStream;
-	inputFileStream.open(inputFile.str());
-
+	fstream inputFileStream;
+	//string input =  inputFile.str(); 
+	inputFileStream.open(inputName); 
+	//inputFileStream.open(input);
 
 	string line;
-
 	string iow;
 	string type;
 	string check1, check2, check3, check4, check5, check6, check7, check8;
@@ -88,8 +89,8 @@ void verilogSim::ReadCommandsFromFile() {
 				if ((iow == "input") && ((iow != check1) || (type != check2))) {
 					Inputs temp;
 					temp.SetVariableI(variable);
-					temp.SetTimeSlotASAPI(0); 
-					temp.SetTimeSlotALAPI(_latency); 
+		//			temp.SetTimeSlotASAPI(0); 
+			//		temp.SetTimeSlotALAPI(_latency); 
 
 					if (firstLetter == 'I') {
 

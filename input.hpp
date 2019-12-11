@@ -32,14 +32,14 @@ private:
     std::vector<Registers> _registers;
     char* _inputFileName;
     char* _outputFileName;
-	int _latency; 
+	//int _latency; 
     
 public:
     void run(char* _inputFileName, char* _outputFileName);
     void ReadCommandsFromFile();
     unsigned int TestValid();
     void WriteCommandsToFile();
-	void TimeSlotScheduling(); 
+	//void TimeSlotScheduling(); 
 
 };
 
