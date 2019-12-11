@@ -17,7 +17,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include "Inputs.hpp"
+#include "inputs.hpp"
 #include "Outputs.hpp"
 #include "Wires.hpp"
 #include "Equations.hpp"
@@ -35,7 +35,7 @@ private:
 	int _latency; 
     
 public:
-    void run(char* _inputFileName, int latency, char* _outputFileName);
+    void run(char* _inputFileName, char* _outputFileName);
     void ReadCommandsFromFile();
     unsigned int TestValid();
     void WriteCommandsToFile();

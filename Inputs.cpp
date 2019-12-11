@@ -6,7 +6,7 @@
 //  Copyright © 2019 Ian Hooks. All rights reserved.
 //
 
-#include "Inputs.hpp"
+#include "inputs.hpp"
 
 
 Inputs::Inputs(char dataTypeI, unsigned int dataWidthI, string variableI) {

@@ -5,22 +5,24 @@
 //  Created by Ian Hooks on 10/29/19.
 //  Copyright © 2019 Ian Hooks. All rights reserved.
 //
-
+//hi
 #include "input.hpp"
-#include "Inputs.hpp"
+#include "inputs.hpp"
 #include "Outputs.hpp"
 #include "Wires.hpp"
 #include "Equations.hpp"
 #include "Registers.hpp"
 #include <string>
 #include <algorithm>
+#include <ostream> 
+#include <istream>
 
-using namespace std;
-
-void verilogSim::run(char* inputFileName, int latency, char* outputFileName) {
+using namespace std; 
+ 
+void verilogSim::run(char* inputFileName, char* outputFileName) {
 	_inputFileName = inputFileName;
 	_outputFileName = outputFileName;
-	_latency = latency; 
+	//_latency = latency; 
 }
 
 void verilogSim::ReadCommandsFromFile() {
@@ -87,7 +89,7 @@ void verilogSim::ReadCommandsFromFile() {
 					Inputs temp;
 					temp.SetVariableI(variable);
 					temp.SetTimeSlotASAPI(0); 
-					temp.SetTimeSlotALAPI(_latency);
+					temp.SetTimeSlotALAPI(_latency); 
 
 					if (firstLetter == 'I') {
 
@@ -172,8 +174,8 @@ void verilogSim::ReadCommandsFromFile() {
 				if ((iow == "output") && ((iow != check3) || (type != check4))) {
 					Outputs temp;
 					temp.SetVariableO(variable);
-					temp.SetTimeSlotASAPO(0);
-					temp.SetTimeSlotALAPO(_latency);
+				//	temp.SetTimeSlotASAPO(0);
+				//	temp.SetTimeSlotALAPO(_latency);
 
 					if (firstLetter == 'I') {
 
@@ -326,8 +328,8 @@ void verilogSim::ReadCommandsFromFile() {
 				if ((iow == "variable") && ((iow != check5) || (type != check6))) {
 					Wires temp;
 					temp.SetVariableW(variable);
-					temp.SetTimeSlotASAPW(0);
-					temp.SetTimeSlotALAPW(_latency);
+				//	temp.SetTimeSlotASAPW(0);
+				//	temp.SetTimeSlotALAPW(_latency);
 
 
 
@@ -425,8 +427,8 @@ void verilogSim::ReadCommandsFromFile() {
 					temp.SetOut(iow);
 					temp.SetFirst(variable);
 					temp.SetOperation(extra);
-					temp.SetTimeSlotASAPE(0);
-					temp.SetTimeSlotALAPE(_latency);
+				//	temp.SetTimeSlotASAPE(0);
+				//	temp.SetTimeSlotALAPE(_latency);
 
 					if (extra == "?") {
 						lineStream >> mux2 >> colon >> sel;
@@ -594,6 +596,7 @@ unsigned int verilogSim::TestValid() {
     return 0;
 }
 
+/*
 void verilogSim::TimeSlotScheduling() {
 
 	unsigned int firstTimeSlotASAP = 0; 
@@ -676,6 +679,7 @@ void verilogSim::TimeSlotScheduling() {
 		}
 	}
 	}
+	*/
 
 void verilogSim::WriteCommandsToFile() {
 
@@ -711,20 +715,20 @@ void verilogSim::WriteCommandsToFile() {
 	
 	//now we begin adding the inputs, they're all individual for now
 	//if you figure out how to group them all by sizes props
-	for (auto& _input : _inputs) {
+	for (auto a = 0; a < _inputs.size(); a++) {
 		outputFile << "input ";
 
 		//tack on signed if the type is signed, unsigneds don't need to be declared
-		if (_input.GetDataTypeI() == 'I') {
+		if (_inputs.at(a).GetDataTypeI() == 'I') {
 			outputFile << "signed ";
 		}
 
 		//add in the bitwidth part of the text
-		if (_input.GetDataWidthI() == 1) {
-			outputFile << _input.GetVariableI() << ";" << endl;
+		if (_inputs.at(a).GetDataWidthI() == 1) {
+			outputFile << _inputs.at(a).GetVariableI() << ";" << endl;
 		}
 		else {
-			outputFile << "[" << std::to_string(_input.GetDataWidthI() - 1) << ":0] " << _input.GetVariableI() << ";" << endl;
+			outputFile << "[" << _inputs.at(a).GetDataWidthI() - 1 << ":0] " << _inputs.at(a).GetVariableI() << ";" << endl;
 		}
 	}
 	
@@ -732,20 +736,20 @@ void verilogSim::WriteCommandsToFile() {
 	outputFile << "output reg Done;" << endl;
 
 	//outputs are also all on their own
-	for (auto& _output : _outputs) {
+	for (auto a = 0; a < _outputs.size(); a++) {
 		outputFile << "output ";
 
 		//tack on signed if the type is signed
-		if (_output.GetDataTypeO() == 'I') {
+		if (_outputs.at(a).GetDataTypeO() == 'I') {
 			outputFile << "signed ";
 		}
 
 		//add in the bitwidth part
-		if (_output.GetDataWidthO() == 1) {
-			outputFile << _output.GetVariableO() << ";" << endl;
+		if (_outputs.at(a).GetDataWidthO() == 1) {
+			outputFile << _outputs.at(a).GetVariableO() << ";" << endl;
 		}
 		else {
-			outputFile << "[" << std::to_string(_output.GetDataWidthO() - 1) << ":0] " << _output.GetVariableO() << ";" << endl;
+			outputFile << "[" << _outputs.at(a).GetDataWidthO() - 1 << ":0] " << _outputs.at(a).GetVariableO() << ";" << endl;
 		}
 	}
 
@@ -763,7 +767,7 @@ void verilogSim::WriteCommandsToFile() {
 			outputFile << _wires.at(w).GetVariableW() << ";" << endl;
 		}
 		else {
-			outputFile << "[" << std::to_string(_wires.at(w).GetDataWidthW() - 1) << ":0] " << _wires.at(w).GetVariableW() << ";" << endl;
+			outputFile << "[" << _wires.at(w).GetDataWidthW() - 1 << ":0] " << _wires.at(w).GetVariableW() << ";" << endl;
 		}
 	}
 
@@ -783,7 +787,7 @@ void verilogSim::WriteCommandsToFile() {
 			outputFile << _registers.at(r).GetVariableR() << ";" << endl;
 		}
 		else {
-			outputFile << "[" << std::to_string(_registers.at(r).GetDataWidthR() - 1) << ":0] " << _registers.at(r).GetVariableR() << ";" << endl;
+			outputFile << "[" << _registers.at(r).GetDataWidthR() - 1 << ":0] " << _registers.at(r).GetVariableR() << ";" << endl;
 		}
 	}
 
@@ -813,13 +817,13 @@ void verilogSim::WriteCommandsToFile() {
 		auto op = _equations.at(f).GetOperation(); 
 		auto out = _equations.at(f).GetOut();
 		auto muxSel = _equations.at(f).GetMuxSel();
-		auto fWidth = 0;
-		auto sWidth = 0;
-		auto oWidth = 0;   //Added this for setting bitwidth when output is larger 
-		auto bitWidth = 0;
-		auto bitWidthc = 0;  //Bitwidth of output of comparator 
-		auto difference = 0; //Difference between bitwidth of output and input
-		auto sign = 0; //Added this for keeping track of the sign of the function 
+		int fWidth = 0;
+		int sWidth = 0;
+		int oWidth = 0;   //Added this for setting bitwidth when output is larger 
+		int bitWidth = 0;
+		int bitWidthc = 0;  //Bitwidth of output of comparator 
+		int difference = 0; //Difference between bitwidth of output and input
+		int sign = 0; //Added this for keeping track of the sign of the function
 
 		
 
@@ -829,46 +833,47 @@ void verilogSim::WriteCommandsToFile() {
 //        cout << _inputs.at(0).GetDataWidthI() << endl;
 //        cout << _inputs.at(1).GetDataWidthI() << endl;
 
+
 		//compare the first and second operands to find their bitwidths
 		//starting with an inputs comparison
-		for (auto& _input : _inputs) {
-			if (first == _input.GetVariableI()) {
-				fWidth = _input.GetDataWidthI();
-				firstVariableI = _input;
+		for (auto a = 0; a < _inputs.size(); a++) {
+			if (first == _inputs.at(a).GetVariableI()) {
+				fWidth = _inputs.at(a).GetDataWidthI();
+				firstVariableI = _inputs.at(a);
 
 				//cout << "first got: " << _inputs.at(g).GetDataWidthI() << endl;
 			}
-			if (second == _input.GetVariableI()) {
-				sWidth = _input.GetDataWidthI();
-				secondVariableI = _input;
+			if (second == _inputs.at(a).GetVariableI()) {
+				sWidth = _inputs.at(a).GetDataWidthI();
+				secondVariableI = _inputs.at(a);
 
 				//cout << "second got: " << _inputs.at(g).GetDataWidthI() << endl;
 			}
 		}
 		//next an outputs comparison
-		for (auto& _output : _outputs) {
+		for (auto b = 0; b < _outputs.size(); b++) {
 			//            if (out == _outputs.at(h).GetVariableO()) {
 			//                cout << _outputs.at(0).GetVariableO() << endl;
 			//                cout << "it entered the output check loop!" << endl;
 			//            }
 
-			if (first == _output.GetVariableO()) {
-				fWidth = _output.GetDataWidthO();
+			if (first == _outputs.at(b).GetVariableO()) {
+				fWidth = _outputs.at(b).GetDataWidthO();
 			}
-			if (second == _output.GetVariableO()) {
-				sWidth = _output.GetDataWidthO();
+			if (second == _outputs.at(b).GetVariableO()) {
+				sWidth = _outputs.at(b).GetDataWidthO();
 			}
 
-			if (out == _output.GetVariableO()) {     //If the output variable is a signed output, set sign to true
-				if (_output.GetDataTypeO() == 'I') {
+			if (out == _outputs.at(b).GetVariableO()) {     //If the output variable is a signed output, set sign to true
+				if (_outputs.at(b).GetDataTypeO() == 'I') {
 					sign = 1;
 				}
-				oWidth = _output.GetDataWidthO();   //Set width of output 
+				oWidth = _outputs.at(b).GetDataWidthO();   //Set width of output 
 			}
 		}
 		//finally a wires comparison
-		for (auto& _wire : _wires) {
-			auto tempVariableW = _wire.GetVariableW();
+		for (auto c = 0; c < _wires.size(); c++) {
+			auto tempVariableW = _wires.at(c).GetVariableW();
 
 			/*if (tempVariableW.size() == 2)
 			{
@@ -876,31 +881,31 @@ void verilogSim::WriteCommandsToFile() {
 			}  //Erase Extra Space Character */
 
 			if (tempVariableW.compare(first) == 0) {
-				fWidth = _wire.GetDataWidthW();
-				firstVariableW = _wire;
+				fWidth = _wires.at(c).GetDataWidthW();
+				firstVariableW = _wires.at(c);
 				firstType = 1;
 				//fWidth = temp1Width;
 				cout << "width for first is " << fWidth << endl;
 			}
 
 			if (tempVariableW.compare(second) == 0) {
-				sWidth = _wire.GetDataWidthW();
-				secondVariableW = _wire;
+				sWidth = _wires.at(c).GetDataWidthW();
+				secondVariableW = _wires.at(c);
 				secondType = 1;
 				//sWidth = temp2Width;
 				cout << "width for second is " << sWidth << endl;
 			}
 
-			if (out == _wire.GetVariableW()) {     //If the output of the equation is a signed wire, set sign to true 
-				if (_wire.GetDataTypeW() == 'I') {
+			if (out == _wires.at(c).GetVariableW()) {     //If the output of the equation is a signed wire, set sign to true 
+				if (_wires.at(c).GetDataTypeW() == 'I') {
 					sign = 1;
 				}
-				oWidth = _wire.GetDataWidthW();   //Set width of output 
+				oWidth = _wires.at(c).GetDataWidthW();   //Set width of output 
 			}
 		}
 
-		for (auto& _register : _registers) {
-			auto tempVariableR = _register.GetVariableR();
+		for (auto d = 0; d < _registers.size(); d++) {
+			auto tempVariableR = _registers.at(d).GetVariableR();
 
 			/*if (tempVariableW.size() == 2)
 			{
@@ -908,26 +913,26 @@ void verilogSim::WriteCommandsToFile() {
 			}  //Erase Extra Space Character */
 
 			if (tempVariableR.compare(first) == 0) {
-				fWidth = _register.GetDataWidthR();
-				firstVariableR = _register;
+				fWidth = _registers.at(d).GetDataWidthR();
+				firstVariableR = _registers.at(d);
 				firstType = 2;
 				//fWidth = temp1Width;
 				//cout << "width for first is " << fWidth << endl;
 			}
 
 			if (tempVariableR.compare(second) == 0) {
-				sWidth = _register.GetDataWidthR();
-				secondVariableR = _register;
+				sWidth = _registers.at(d).GetDataWidthR();
+				secondVariableR = _registers.at(d);
 				secondType = 2;
 				//sWidth = temp2Width;
 				//cout << "width for second is " << sWidth << endl;
 			}
 
-			if (out == _register.GetVariableR()) {     //If the output of the equation is a register 
-				if (_register.GetDataTypeR() == 'I') {  //If the register is signed, set signed to true 
+			if (out == _registers.at(d).GetVariableR()) {     //If the output of the equation is a register 
+				if (_registers.at(d).GetDataTypeR() == 'I') {  //If the register is signed, set signed to true 
 					sign = 1;
 				}
-				oWidth = _register.GetDataWidthR();   //Set width of output 
+				oWidth = _registers.at(d).GetDataWidthR();   //Set width of output 
 			}
 		}
 
@@ -953,200 +958,337 @@ void verilogSim::WriteCommandsToFile() {
 		bitWidthc = std::max(fWidth, sWidth);          //Bitwidth of comparator is max of inputs 
 
 		cout << op; 
+
+		std::ostringstream strm;   //Holds the all of the difference streams
+
+		std::string diffStr;   //Holds bitwidth difference string 
+		std::string diffStr1;  //Holds bitwidth difference minus 1
+		std::string diffStr3;  //Holds the bitwidth when concatination is needed 
 		
 		if ((op == ">") || (op == "==") || (op == "<")) {  //If operation is  a comparator, use the bitWidthc
 			if (firstType == 0) {  //If the first variable is of type input
+				difference = bitWidthc - firstVariableI.GetDataWidthI(); //Get Difference when bitWidth is larger 
+				strm << difference; 
+				diffStr = strm.str(); //store difference stream in string
+
+				difference = difference - 1; //Subtract 1 from N to put in bidwidth brackets 
+				strm << difference; 
+				diffStr1 = strm.str(); //store difference - 1 stream in string
+
+				difference = firstVariableI.GetDataWidthI() - bitWidthc; //Get difference when input has larger bitWidth
+				strm << difference; 
+				difference = firstVariableI.GetDataWidthI() - difference - 1; //get difference if first input has a wider bit width than output 
+				strm << difference; 
+				diffStr3 = strm.str();  //store bitwidth needed to concatinate to
+				
 				if ((firstVariableI.GetDataWidthI() < bitWidthc) && (firstVariableI.GetDataTypeI() == 'I')) {  //If first input is fewer bits than output, signed, and smaller than owidth, then sign extend it
-					difference = bitWidthc - firstVariableI.GetDataWidthI();
-					first = "{{" + std::to_string(difference) + '{' + first + "[" + std::to_string(difference - 1) + "]}}, " + first + '}';
+					first = "{{" + diffStr + '{' + first + "[" + diffStr1 + "]}}, " + first + '}';
 				}
 				if ((firstVariableI.GetDataWidthI() < bitWidthc) && (firstVariableI.GetDataTypeI() == 'U')) { //If first input is fewer bits than output and unsigned, and smaller than owidth , then pad with zeros
-					difference = bitWidthc - firstVariableI.GetDataWidthI();
-					first = "{" + std::to_string(difference) + "'b0, " + first + "}";
+					first = "{" + diffStr + "'b0, " + first + "}";
 				}
 				if ((firstVariableI.GetDataWidthI() > bitWidthc)) {   //If first input has a wider bit width than output, connect least significant bits
-					difference = firstVariableI.GetDataWidthI() - bitWidthc;
-					first = first + "[" + std::to_string(firstVariableI.GetDataWidthI() - difference - 1) + ":0]";
+					first = first + "[" + diffStr3 + ":0]";
 				}
 				//y[15:0]
 			}
 			else if (firstType == 1) { //If the first variable of equation is of type wire
+				difference = bitWidthc - firstVariableW.GetDataWidthW(); //Get Difference when bitWidth is larger 
+				strm << difference;
+				diffStr = strm.str(); //store difference stream in string
+
+				difference = difference - 1; //Subtract 1 from N to put in bidwidth brackets 
+				strm << difference;
+				diffStr1 = strm.str(); //store difference - 1 stream in string
+
+				difference = firstVariableW.GetDataWidthW() - bitWidthc; //Get difference when input has larger bitWidth
+				strm << difference;
+				difference = firstVariableW.GetDataWidthW() - difference - 1; //get difference if first input has a wider bit width than output 
+				strm << difference;
+				diffStr3 = strm.str();  //store bitwidth needed to concatinate to
+
 				if ((firstVariableW.GetDataWidthW() < bitWidthc) && (firstVariableW.GetDataTypeW() == 'I')) { //If first wire is fewer bits than output and signed, then sign extend it
-						difference = bitWidthc - firstVariableW.GetDataWidthW();
-						first = "{{" + std::to_string(difference) + '{' + first + "[" + std::to_string(difference - 1) + "]}}, " + first + '}';
+					first = "{{" + diffStr + '{' + first + "[" + diffStr1 + "]}}, " + first + '}';
 				}
 				if ((firstVariableW.GetDataWidthW() < bitWidthc) && (firstVariableW.GetDataTypeW() == 'U')) { //If first wire is fewer bits than output and unsigned, then pad with zeros
-					difference = bitWidthc - firstVariableW.GetDataWidthW();
-					first = "{" + std::to_string(difference) + "'b0, " + first + "}";
+					first = "{" + diffStr + "'b0, " + first + "}";
 				}
 				if ((firstVariableW.GetDataWidthW() > bitWidthc)) { //If first input has a wider bit width than output, connect least significant bits
-					difference = firstVariableW.GetDataWidthW() - bitWidthc;
-					first = first + "[" + std::to_string(firstVariableW.GetDataWidthW() - difference - 1) + ":0]";
+					first = first + "[" + diffStr3 + ":0]";
 				}
 			}
 
 			else if (firstType == 2) { //If the first variable of equation is of type register 
+				difference = bitWidthc - firstVariableR.GetDataWidthR(); //Get Difference when bitWidth is larger 
+				strm << difference;
+				diffStr = strm.str(); //store difference stream in string
+
+				difference = difference - 1; //Subtract 1 from N to put in bidwidth brackets 
+				strm << difference;
+				diffStr1 = strm.str(); //store difference - 1 stream in string
+
+				difference = firstVariableR.GetDataWidthR() - bitWidthc; //Get difference when input has larger bitWidth
+				strm << difference;
+				difference = firstVariableR.GetDataWidthR() - difference - 1; //get difference if first input has a wider bit width than output 
+				strm << difference;
+				diffStr3 = strm.str();  //store bitwidth needed to concatinate to
+
 				if ((firstVariableR.GetDataWidthR() < bitWidthc) && (firstVariableR.GetDataTypeR() == 'I')) { //If first register is fewer bits than output and signed, then sign extend it
-					difference = bitWidthc - firstVariableR.GetDataWidthR();
-					first = "{{" + std::to_string(difference) + '{' + first + "[" + std::to_string(difference - 1) + "]}}, " + first + '}';
+					first = "{{" + diffStr + '{' + first + "[" + diffStr1 + "]}}, " + first + '}';
 				}
 				if ((firstVariableR.GetDataWidthR() < bitWidthc) && (firstVariableR.GetDataTypeR() == 'U')) { //If the first register is fewer bits than output and unsigned, then pad with zeros
-					difference = bitWidthc - firstVariableR.GetDataWidthR();
-					first = "{" + std::to_string(difference) + "'b0, " + first + "}";
+					first = "{" + diffStr + "'b0, " + first + "}";
 				}
 				if ((firstVariableR.GetDataWidthR() > bitWidthc)) { //If first input has a wider bit width than output, connect least significant bits
-					difference = firstVariableR.GetDataWidthR() - bitWidthc;
-					first = first + "[" + std::to_string(firstVariableR.GetDataWidthR() - difference - 1) + ":0]";
+					first = first + "[" + diffStr3 + ":0]";
 				}
 			}
 
 
 			if (secondType == 0) {  //If the second variable is of type input
+				difference = bitWidthc - secondVariableI.GetDataWidthI(); //Get Difference when bitWidth is larger 
+				strm << difference;
+				diffStr = strm.str(); //store difference stream in string
+
+				difference = difference - 1; //Subtract 1 from N to put in bidwidth brackets 
+				strm << difference;
+				diffStr1 = strm.str(); //store difference - 1 stream in string
+
+				difference = secondVariableI.GetDataWidthI() - bitWidthc; //Get difference when input has larger bitWidth
+				strm << difference;
+				difference = secondVariableI.GetDataWidthI() - difference - 1; //get difference if first input has a wider bit width than output 
+				strm << difference;
+				diffStr3 = strm.str();  //store bitwidth needed to concatinate to
 
 				if ((secondVariableI.GetDataWidthI() < bitWidthc) && (secondVariableI.GetDataTypeI() == 'I')) { //If second input is fewer bits than output and signed, sign extend
-					difference = bitWidthc - secondVariableI.GetDataWidthI();
-					second = "{{" + std::to_string(difference) + '{' + second + "[" + std::to_string(difference - 1) + "]}}, " + second + '}';
+					second = "{{" + diffStr + '{' + second + "[" + diffStr1 + "]}}, " + second + '}';
 				}
 
 				if ((secondVariableI.GetDataWidthI() < bitWidthc) && (secondVariableI.GetDataTypeI() == 'U')) { //If second input is fewer bits than output and unsigned, pad with zeros
-					difference = bitWidthc - secondVariableI.GetDataWidthI();
-					second = "{" + std::to_string(difference) + "'b0, " + second + "}";
+					second = "{" + diffStr + "'b0, " + second + "}";
 				}
 				if ((secondVariableI.GetDataWidthI() > bitWidthc)) {   //If second input has a wider bit width than output, connect least significant bits
-					difference = secondVariableI.GetDataWidthI() - bitWidthc;
-					second = second + "[" + std::to_string(secondVariableI.GetDataWidthI() - difference - 1) + ":0]";
+					second = second + "[" + diffStr3 + ":0]";
 				}
 			}
 			else if (secondType == 1) { //If the second variable is of type wire
+				difference = bitWidthc - secondVariableW.GetDataWidthW(); //Get Difference when bitWidth is larger 
+				strm << difference;
+				diffStr = strm.str(); //store difference stream in string
+
+				difference = difference - 1; //Subtract 1 from N to put in bidwidth brackets 
+				strm << difference;
+				diffStr1 = strm.str(); //store difference - 1 stream in string
+
+				difference = secondVariableW.GetDataWidthW() - bitWidthc; //Get difference when input has larger bitWidth
+				strm << difference;
+				difference = secondVariableW.GetDataWidthW() - difference - 1; //get difference if first input has a wider bit width than output 
+				strm << difference;
+				diffStr3 = strm.str();  //store bitwidth needed to concatinate to
+
 				if ((secondVariableW.GetDataWidthW() < bitWidthc) && (secondVariableW.GetDataTypeW() == 'I')) { //If second wire is fewer bits than output and signed, sign extend
-					difference = bitWidthc - secondVariableW.GetDataWidthW();
-					second = "{{" + std::to_string(difference) + '{' + second + "[" + std::to_string(difference - 1) + "]}}, " + second + '}';
+					second = "{{" + diffStr + '{' + second + "[" + diffStr1 + "]}}, " + second + '}';
 				}
 
 				if ((secondVariableW.GetDataWidthW() < bitWidthc) && (secondVariableW.GetDataTypeW() == 'U')) { //If second wire is fewer bits than output and unsigned, pad with zeros
-					difference = bitWidthc - secondVariableW.GetDataWidthW();
-					second = "{" + std::to_string(difference) + "'b0, " + second + "}";
+					second = "{" + diffStr + "'b0, " + second + "}";
 				}
 				if ((secondVariableW.GetDataWidthW() > bitWidthc)) {   //If second wire has a wider bit width than output, connect least significant bits
-					difference = secondVariableW.GetDataWidthW() - bitWidthc;
-					second = second + "[" + std::to_string(secondVariableW.GetDataWidthW() - difference - 1) + ":0]";
+					second = second + "[" + diffStr3 + ":0]";
 				}
 			}
 
 			else if (secondType == 2) { //If the second variable is of type register
+				difference = bitWidthc - secondVariableR.GetDataWidthR(); //Get Difference when bitWidth is larger 
+				strm << difference;
+				diffStr = strm.str(); //store difference stream in string
+
+				difference = difference - 1; //Subtract 1 from N to put in bidwidth brackets 
+				strm << difference;
+				diffStr1 = strm.str(); //store difference - 1 stream in string
+
+				difference = secondVariableR.GetDataWidthR() - bitWidthc; //Get difference when input has larger bitWidth
+				strm << difference;
+				difference = secondVariableR.GetDataWidthR() - difference - 1; //get difference if first input has a wider bit width than output 
+				strm << difference;
+				diffStr3 = strm.str();  //store bitwidth needed to concatinate to
+
 				if ((secondVariableR.GetDataWidthR() < bitWidthc) && (secondVariableR.GetDataTypeR() == 'I')) { //If second wire is fewer bits than output and signed, sign extend
-					difference = bitWidthc - secondVariableR.GetDataWidthR();
-					second = "{{" + std::to_string(difference) + '{' + second + "[" + std::to_string(difference - 1) + "]}}, " + second + '}';
+					second = "{{" + diffStr + '{' + second + "[" + diffStr1 + "]}}, " + second + '}';
 				}
 
 				if ((secondVariableR.GetDataWidthR() < bitWidthc) && (secondVariableR.GetDataTypeR() == 'U')) { //If second wire is fewer bits than output and unsigned, pad with zeros
-					difference = bitWidthc - secondVariableR.GetDataWidthR();
-					second = "{" + std::to_string(difference) + "'b0, " + second + "}";
+					second = "{" + diffStr + "'b0, " + second + "}";
 				}
 				if ((secondVariableR.GetDataWidthR() > bitWidthc)) {   //If second wire has a wider bit width than output, connect least significant bits
-					difference = secondVariableR.GetDataWidthR() - bitWidthc;
-					second = second + "[" + std::to_string(secondVariableR.GetDataWidthR() - difference - 1) + ":0]";
+					second = second + "[" + diffStr3 + ":0]";
 				}
 			}
 		}
 
 		else {  //If operation is not a comparator, use the oWidth
 			if (firstType == 0) {  //If the first variable is of type input
-					if ((firstVariableI.GetDataWidthI() < oWidth) && (firstVariableI.GetDataTypeI() == 'I')) {  //If first input is fewer bits than output, signed, and smaller than owidth, then sign extend it
-						difference = oWidth - firstVariableI.GetDataWidthI();
-						first = "{{" + std::to_string(difference) + '{' + first + "[" + std::to_string(difference - 1) + "]}}, " + first + '}';
-					}
-					if ((firstVariableI.GetDataWidthI() < oWidth) && (firstVariableI.GetDataTypeI() == 'U')) { //If first input is fewer bits than output and unsigned, and smaller than owidth , then pad with zeros
-						difference = oWidth - firstVariableI.GetDataWidthI();
-						first = "{" + std::to_string(difference) + "'b0, " + first + "}";
-					}
-					if ((firstVariableI.GetDataWidthI() > oWidth)) {   //If first input has a wider bit width than output, connect least significant bits
-						difference = firstVariableI.GetDataWidthI() - oWidth;
-						first = first + "[" + std::to_string(firstVariableI.GetDataWidthI() - difference - 1) + ":0]";
-					}
-				//y[15:0]
+				difference = oWidth - firstVariableI.GetDataWidthI(); //Get Difference when bitWidth is larger 
+				strm << difference;
+				diffStr = strm.str(); //store difference stream in string
+
+				difference = difference - 1; //Subtract 1 from N to put in bidwidth brackets 
+				strm << difference;
+				diffStr1 = strm.str(); //store difference - 1 stream in string
+
+				difference = firstVariableI.GetDataWidthI() - oWidth; //Get difference when input has larger bitWidth
+				strm << difference;
+				difference = firstVariableI.GetDataWidthI() - difference - 1; //get difference if first input has a wider bit width than output 
+				strm << difference;
+				diffStr3 = strm.str();  //store bitwidth needed to concatinate to
+
+				if ((firstVariableI.GetDataWidthI() < oWidth) && (firstVariableI.GetDataTypeI() == 'I')) {  //If first input is fewer bits than output, signed, and smaller than owidth, then sign extend it
+					first = "{{" + diffStr + '{' + first + "[" + diffStr1 + "]}}, " + first + '}';
+				}
+				if ((firstVariableI.GetDataWidthI() < oWidth) && (firstVariableI.GetDataTypeI() == 'U')) { //If first input is fewer bits than output and unsigned, and smaller than owidth , then pad with zeros
+					first = "{" + diffStr + "'b0, " + first + "}";
+				}
+				if ((firstVariableI.GetDataWidthI() > oWidth)) {   //If first input has a wider bit width than output, connect least significant bits
+					first = first + "[" + diffStr3 + ":0]";
+				}
+			//y[15:0]
 			}
 			else if (firstType == 1) { //If the first variable of equation is of type wire
 				if (op != "?") {
-					if ((firstVariableW.GetDataWidthW() < oWidth) && (firstVariableW.GetDataTypeW() == 'I')) { //If first wire is fewer bits than output and signed, then sign extend it
-						difference = oWidth - firstVariableW.GetDataWidthW();
-						first = "{{" + std::to_string(difference) + '{' + first + "[" + std::to_string(difference - 1) + "]}}, " + first + '}';
-					}
-					if ((firstVariableW.GetDataWidthW() < oWidth) && (firstVariableW.GetDataTypeW() == 'U')) { //If first wire is fewer bits than output and unsigned, then pad with zeros
-						difference = oWidth - firstVariableW.GetDataWidthW();
-						first = "{" + std::to_string(difference) + "'b0, " + first + "}";
-					}
-					if ((firstVariableW.GetDataWidthW() > oWidth)) { //If first input has a wider bit width than output, connect least significant bits
-						difference = firstVariableW.GetDataWidthW() - oWidth;
-						first = first + "[" + std::to_string(firstVariableW.GetDataWidthW() - difference - 1) + ":0]";
-					}
+				difference = oWidth - firstVariableW.GetDataWidthW(); //Get Difference when bitWidth is larger 
+				strm << difference;
+				diffStr = strm.str(); //store difference stream in string
+
+				difference = difference - 1; //Subtract 1 from N to put in bidwidth brackets 
+				strm << difference;
+				diffStr1 = strm.str(); //store difference - 1 stream in string
+
+				difference = firstVariableW.GetDataWidthW() - oWidth; //Get difference when input has larger bitWidth
+				strm << difference;
+				difference = firstVariableW.GetDataWidthW() - difference - 1; //get difference if first input has a wider bit width than output 
+				strm << difference;
+				diffStr3 = strm.str();  //store bitwidth needed to concatinate to
+
+				diffStr3 = strm.str();  //store bitwidth needed to concatinate to
+				if ((firstVariableW.GetDataWidthW() < oWidth) && (firstVariableW.GetDataTypeW() == 'I')) { //If first wire is fewer bits than output and signed, then sign extend it
+					first = "{{" + diffStr + '{' + first + "[" + diffStr1 + "]}}, " + first + '}';
+				}
+				if ((firstVariableW.GetDataWidthW() < oWidth) && (firstVariableW.GetDataTypeW() == 'U')) { //If first wire is fewer bits than output and unsigned, then pad with zeros
+					first = "{" + diffStr + "'b0, " + first + "}";
+				}
+				if ((firstVariableW.GetDataWidthW() > oWidth)) { //If first input has a wider bit width than output, connect least significant bits
+					first = first + "[" + diffStr3 + ":0]";
+				}
 				}
 			}
 
 			else if (firstType == 2) { //If the first variable of equation is of type register 
+				difference = oWidth - firstVariableR.GetDataWidthR(); //Get Difference when bitWidth is larger 
+				strm << difference;
+				diffStr = strm.str(); //store difference stream in string
+
+				difference = difference - 1; //Subtract 1 from N to put in bidwidth brackets 
+				strm << difference;
+				diffStr1 = strm.str(); //store difference - 1 stream in string
+
+				difference = firstVariableR.GetDataWidthR() - oWidth; //Get difference when input has larger bitWidth
+				strm << difference;
+				difference = firstVariableR.GetDataWidthR() - difference - 1; //get difference if first input has a wider bit width than output 
+				strm << difference;
+				diffStr3 = strm.str();  //store bitwidth needed to concatinate to
+
 				if ((firstVariableR.GetDataWidthR() < oWidth) && (firstVariableR.GetDataTypeR() == 'I')) { //If first register is fewer bits than output and signed, then sign extend it
-					difference = oWidth - firstVariableR.GetDataWidthR();
-					first = "{{" + std::to_string(difference) + '{' + first + "[" + std::to_string(difference - 1) + "]}}, " + first + '}';
+					first = "{{" + diffStr + '{' + first + "[" + diffStr1 + "]}}, " + first + '}';
 				}
 				if ((firstVariableR.GetDataWidthR() < oWidth) && (firstVariableR.GetDataTypeR() == 'U')) { //If the first register is fewer bits than output and unsigned, then pad with zeros
-					difference = oWidth - firstVariableR.GetDataWidthR();
-					first = "{" + std::to_string(difference) + "'b0, " + first + "}";
+					first = "{" + diffStr + "'b0, " + first + "}";
 				}
 				if ((firstVariableR.GetDataWidthR() > oWidth)) { //If first input has a wider bit width than output, connect least significant bits
-					difference = firstVariableR.GetDataWidthR() - oWidth;
-					first = first + "[" + std::to_string(firstVariableR.GetDataWidthR() - difference - 1) + ":0]";
+					first = first + "[" + diffStr3 + ":0]";
 				}
 			}
 
 
 			if (secondType == 0) {  //If the second variable is of type input
+				difference = oWidth - secondVariableI.GetDataWidthI(); //Get Difference when bitWidth is larger 
+				strm << difference;
+				diffStr = strm.str(); //store difference stream in string
+
+				difference = difference - 1; //Subtract 1 from N to put in bidwidth brackets 
+				strm << difference;
+				diffStr1 = strm.str(); //store difference - 1 stream in string
+
+				difference = secondVariableI.GetDataWidthI() - oWidth; //Get difference when input has larger bitWidth
+				strm << difference;
+				difference = secondVariableI.GetDataWidthI() - difference - 1; //get difference if first input has a wider bit width than output 
+				strm << difference;
+				diffStr3 = strm.str();  //store bitwidth needed to concatinate to
 
 				if ((secondVariableI.GetDataWidthI() < oWidth) && (secondVariableI.GetDataTypeI() == 'I')) { //If second input is fewer bits than output and signed, sign extend
-					difference = oWidth - secondVariableI.GetDataWidthI();
-					second = "{{" + std::to_string(difference) + '{' + second + "[" + std::to_string(difference - 1) + "]}}, " + second + '}';
+					second = "{{" + diffStr + '{' + second + "[" + diffStr1 + "]}}, " + second + '}';
 				}
 
 				if ((secondVariableI.GetDataWidthI() < oWidth) && (secondVariableI.GetDataTypeI() == 'U')) { //If second input is fewer bits than output and unsigned, pad with zeros
-					difference = oWidth - secondVariableI.GetDataWidthI();
-					second = "{" + std::to_string(difference) + "'b0, " + second + "}";
+					second = "{" + diffStr + "'b0, " + second + "}";
 				}
 				if ((secondVariableI.GetDataWidthI() > oWidth)) {   //If second input has a wider bit width than output, connect least significant bits
-					difference = secondVariableI.GetDataWidthI() - oWidth;
-					second = second + "[" + std::to_string(secondVariableI.GetDataWidthI() - difference - 1) + ":0]";
+					second = second + "[" + diffStr3 + ":0]";
 				}
 			}
 			else if (secondType == 1) { //If the second variable is of type wire
 				if ((op == "<<" || op == ">>") && (secondVariableW.GetDataWidthW() == 1)) {}
 				else {
-					if ((secondVariableW.GetDataWidthW() < oWidth) && (secondVariableW.GetDataTypeW() == 'I')) { //If second wire is fewer bits than output and signed, sign extend
-						difference = oWidth - secondVariableW.GetDataWidthW();
-						second = "{{" + std::to_string(difference) + '{' + second + "[" + std::to_string(difference - 1) + "]}}, " + second + '}';
-					}
+				difference = oWidth - secondVariableW.GetDataWidthW(); //Get Difference when bitWidth is larger 
+				strm << difference;
+				diffStr = strm.str(); //store difference stream in string
 
-					if ((secondVariableW.GetDataWidthW() < oWidth) && (secondVariableW.GetDataTypeW() == 'U')) { //If second wire is fewer bits than output and unsigned, pad with zeros
-						difference = oWidth - secondVariableW.GetDataWidthW();
-						second = "{" + std::to_string(difference) + "'b0, " + second + "}";
-					}
-					if ((secondVariableW.GetDataWidthW() > oWidth)) {   //If second wire has a wider bit width than output, connect least significant bits
-						difference = secondVariableW.GetDataWidthW() - oWidth;
-						second = second + "[" + std::to_string(secondVariableW.GetDataWidthW() - difference - 1) + ":0]";
-					}
+				difference = difference - 1; //Subtract 1 from N to put in bidwidth brackets 
+				strm << difference;
+				diffStr1 = strm.str(); //store difference - 1 stream in string
+
+				difference = secondVariableW.GetDataWidthW() - oWidth; //Get difference when input has larger bitWidth
+				strm << difference;
+				difference = secondVariableW.GetDataWidthW() - difference - 1; //get difference if first input has a wider bit width than output 
+				strm << difference;
+				diffStr3 = strm.str();  //store bitwidth needed to concatinate to
+
+				if ((secondVariableW.GetDataWidthW() < oWidth) && (secondVariableW.GetDataTypeW() == 'I')) { //If second wire is fewer bits than output and signed, sign extend
+					second = "{{" + diffStr + '{' + second + "[" + diffStr1 + "]}}, " + second + '}';
+				}
+
+				if ((secondVariableW.GetDataWidthW() < oWidth) && (secondVariableW.GetDataTypeW() == 'U')) { //If second wire is fewer bits than output and unsigned, pad with zeros
+					second = "{" + diffStr + "'b0, " + second + "}";
+				}
+				if ((secondVariableW.GetDataWidthW() > oWidth)) {   //If second wire has a wider bit width than output, connect least significant bits
+					second = second + "[" + diffStr3 + ":0]";
+				}
 				}
 			}
 
 			else if (secondType == 2) { //If the second variable is of type register
+				difference = oWidth - secondVariableR.GetDataWidthR(); //Get Difference when bitWidth is larger 
+				strm << difference;
+				diffStr = strm.str(); //store difference stream in string
+
+				difference = difference - 1; //Subtract 1 from N to put in bidwidth brackets 
+				strm << difference;
+				diffStr1 = strm.str(); //store difference - 1 stream in string
+
+				difference = secondVariableR.GetDataWidthR() - oWidth; //Get difference when input has larger bitWidth
+				strm << difference;
+				difference = secondVariableR.GetDataWidthR() - difference - 1; //get difference if first input has a wider bit width than output 
+				strm << difference;
+				diffStr3 = strm.str();  //store bitwidth needed to concatinate to
+
 				if ((secondVariableR.GetDataWidthR() < oWidth) && (secondVariableR.GetDataTypeR() == 'I')) { //If second wire is fewer bits than output and signed, sign extend
-					difference = oWidth - secondVariableR.GetDataWidthR();
-					second = "{{" + std::to_string(difference) + '{' + second + "[" + std::to_string(difference - 1) + "]}}, " + second + '}';
+					second = "{{" + diffStr + '{' + second + "[" + diffStr1 + "]}}, " + second + '}';
 				}
 
 				if ((secondVariableR.GetDataWidthR() < oWidth) && (secondVariableR.GetDataTypeR() == 'U')) { //If second wire is fewer bits than output and unsigned, pad with zeros
-					difference = oWidth - secondVariableR.GetDataWidthR();
-					second = "{" + std::to_string(difference) + "'b0, " + second + "}";
+					second = "{" + diffStr + "'b0, " + second + "}";
 				}
 				if ((secondVariableR.GetDataWidthR() > oWidth)) {   //If second wire has a wider bit width than output, connect least significant bits
-					difference = secondVariableR.GetDataWidthR() - oWidth;
-					second = second + "[" + std::to_string(secondVariableR.GetDataWidthR() - difference - 1) + ":0]";
+					second = second + "[" + diffStr3 + ":0]";
 				}
 			}
 		}
