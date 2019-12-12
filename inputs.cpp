@@ -1,5 +1,5 @@
 //
-//  Inputs.cpp
+//  inputs.cpp
 //  dpgen
 //
 //  Created by Ian Hooks on 10/29/19.
@@ -9,7 +9,7 @@
 #include "inputs.hpp"
 
 
-Inputs::Inputs(char dataTypeI, unsigned int dataWidthI, string variableI) {
+inputs::inputs(char dataTypeI, unsigned int dataWidthI, string variableI) {
     
     _dataTypeI = dataTypeI;
     _dataWidthI = dataWidthI;
@@ -17,7 +17,7 @@ Inputs::Inputs(char dataTypeI, unsigned int dataWidthI, string variableI) {
     
 }
 
-Inputs::Inputs(){
+inputs::inputs(){
     
     SetDataTypeI('0');
     SetDataWidthI(0.0);
@@ -29,56 +29,55 @@ Inputs::Inputs(){
     
 }
 
-char Inputs::GetDataTypeI() const {
+char inputs::GetDataTypeI() const {
     char dataTypeI = _dataTypeI;
     return dataTypeI;
 }
 
-void Inputs::SetDataTypeI(char dataTypeI) {
+void inputs::SetDataTypeI(char dataTypeI) {
     _dataTypeI = dataTypeI;
 }
 
-unsigned int Inputs::GetDataWidthI() const {
+unsigned int inputs::GetDataWidthI() const {
     unsigned int dataWidthI = _dataWidthI;
     return dataWidthI;
 }
-void Inputs::SetDataWidthI(unsigned int dataWidthI) {
+void inputs::SetDataWidthI(unsigned int dataWidthI) {
     _dataWidthI = dataWidthI;
 }
 
-string Inputs::GetVariableI() const {
+string inputs::GetVariableI() const {
     string variableI = _variableI;
     return variableI;
 }
 
-void Inputs::SetVariableI(string variableI) {
+void inputs::SetVariableI(string variableI) {
     _variableI = variableI;
 }
 
-unsigned int Inputs::GetTimeSlotASAPI() const {
+unsigned int inputs::GetTimeSlotASAPI() const {
 	int timeSlotASAPI = _timeSlotASAPI;
 	return timeSlotASAPI;
 }
 
-void Inputs::SetTimeSlotASAPI(unsigned int timeSlotASAPI) {
+void inputs::SetTimeSlotASAPI(unsigned int timeSlotASAPI) {
 	_timeSlotASAPI = timeSlotASAPI;
 }
 
-unsigned int Inputs::GetTimeSlotALAPI() const {
+unsigned int inputs::GetTimeSlotALAPI() const {
 	int timeSlotALAPI = _timeSlotALAPI;
 	return timeSlotALAPI;
 }
 
-void Inputs::SetTimeSlotALAPI(unsigned int timeSlotALAPI) {
+void inputs::SetTimeSlotALAPI(unsigned int timeSlotALAPI) {
 	_timeSlotALAPI = timeSlotALAPI;
 }
 
-unsigned int Inputs::GetTimeSlotListRI() const {
+unsigned int inputs::GetTimeSlotListRI() const {
 	int timeSlotListRI = _timeSlotListRI;
 	return timeSlotListRI;
 }
 
-void Inputs::SetTimeSlotListRI(unsigned int timeSlotListRI) {
+void inputs::SetTimeSlotListRI(unsigned int timeSlotListRI) {
 	_timeSlotListRI = timeSlotListRI;
 }
-
