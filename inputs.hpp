@@ -1,13 +1,13 @@
 //
-//  Inputs.hpp
+//  inputs.hpp
 //  dpgen
 //
 //  Created by Ian Hooks on 10/29/19.
 //  Copyright © 2019 Ian Hooks. All rights reserved.
 //
 
-#ifndef Inputs_hpp
-#define Inputs_hpp
+#ifndef inputs_hpp
+#define inputs_hpp
 
 #include <stdio.h>
 #include <string.h>
@@ -15,7 +15,7 @@
 
 using namespace std;
 
-class Inputs{
+class inputs{
 private:
     char _dataTypeI;
     unsigned int _dataWidthI;
@@ -24,8 +24,8 @@ private:
 	unsigned int _timeSlotALAPI;
 	unsigned int _timeSlotListRI;
 public:
-    Inputs(char dataTypeI, unsigned int dataWidthI, string variableI);
-    Inputs();
+    inputs(char dataTypeI, unsigned int dataWidthI, string variableI);
+    inputs();
     
     char GetDataTypeI() const;
     void SetDataTypeI(char dataTypeI);
@@ -42,4 +42,4 @@ public:
 
 };
 
-#endif /* Inputs_hpp */
+#endif /* inputs_hpp */
