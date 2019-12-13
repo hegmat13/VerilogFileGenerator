@@ -5,7 +5,7 @@
 //  Created by Ian Hooks on 10/29/19.
 //  Copyright © 2019 Ian Hooks. All rights reserved.
 //
-//hi
+//
 #include "input.hpp"
 #include "inputs.hpp"
 #include "Outputs.hpp"
