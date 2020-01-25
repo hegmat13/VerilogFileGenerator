@@ -1,6 +1,0 @@
-Circuit 1: Theoretical : 5.952 ns	Using Verilog: 5.090 ns
-Circuit 2: Theoretical : 10.259 ns	Using Verilog: 3.894 ns
-Circuit 3: Theoretical : 17.465 ns	Using Verilog: 5.085 ns
-Circuit 4: Theoretical : 13.020 ns	Using Verilog: 4.547 ns
-Circuit 5: Theoretical : 172.854 ns	Using Verilog: 168.530 ns
-Circuit 6: Theoretical : 172.854 ns	Using Verilog: 136.387 ns

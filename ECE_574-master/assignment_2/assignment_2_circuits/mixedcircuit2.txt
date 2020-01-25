@@ -1,8 +1,0 @@
-input Int8 a
-input UInt16 b
-output Int32 c
-
-wire Int32 cwire
-
-cwire = a + b
-c = cwire

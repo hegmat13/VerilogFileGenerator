@@ -1,7 +1,0 @@
-input UInt8 a, b
-output UInt8 c
-
-wire UInt8 cwire
-
-cwire = a + b
-c = cwire

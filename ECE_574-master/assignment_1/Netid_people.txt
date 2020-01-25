@@ -1,4 +1,0 @@
-Name               NetId
-Sai Teja           saitejamanchala
-Nathan Devine      ndevine 
-Alex Blackmon      alexblackmon

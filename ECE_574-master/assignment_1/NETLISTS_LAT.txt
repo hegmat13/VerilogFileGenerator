@@ -1,6 +1,0 @@
-circuit1 : 7.633ns 5.090ns
-circuit2 : 11.764ns 3.894ns
-circuit3 : 17.465ns 5.085ns
-circuit4 : 14.587ns 4.547ns
-circuit5 : 172.854ns 168.530ns
-circuit6 : 172.854ns 136.387ns
